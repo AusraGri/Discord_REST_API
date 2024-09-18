@@ -1,24 +1,15 @@
-import requestSchema from './schema'
-
-// interface GetMessagesParams {
-//     username?: string;
-//     sprint?: string;
-//   }
-export const parseUsername = (username: unknown) =>
-  requestSchema.shape.username.parse(username)
-export const parseSprintId = (sprint: unknown) =>
-  requestSchema.shape.sprint.parse(sprint)
-export const parseMessage = (message: unknown) => requestSchema.parse(message)
+import { MessagesSelect, MessageRepository } from './repository'
+import {requestSchema, payloadSchema} from './schema'
 
 export class MessageService {
   constructor(private readonly messagesRepository: MessageRepository) {}
 
-  async getMessages(username?: string, sprint?: string) {
+  async getMessages(
+    username?: string,
+    sprint?: string
+  ): Promise<MessagesSelect[] | []> {
     if (username && sprint) {
-      return this.messagesRepository.findBySprintAndUsername(
-        sprint,
-        username
-      )
+      return this.messagesRepository.findBySprintAndUsername(sprint, username)
     }
 
     if (username) {
@@ -32,3 +23,7 @@ export class MessageService {
     return this.messagesRepository.findAll()
   }
 }
+
+
+export const parseRequest = (message: unknown) => requestSchema.safeParse(message)
+export const parsePayload = (message: unknown) => payloadSchema.safeParse(message)
