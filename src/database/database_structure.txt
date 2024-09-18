@@ -1,0 +1,20 @@
+congratulation messages table
+id 
+text
+
+sprint titles table
+id (short sprint code)
+full sprint title
+
+user table
+id
+name
+
+messages table
+id
+user_id
+sprint_id
+text_id
+original_message
+gif_url
+created_at
