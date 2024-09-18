@@ -29,7 +29,7 @@ beforeAll(async () => {
       ])
 })
 
-describe('GET /messages', () => {
+describe('Queries for messages table', () => {
   test('should get all messages', async () => {
     const allMessages = await repository.findAll()
 

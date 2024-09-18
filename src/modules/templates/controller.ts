@@ -22,7 +22,7 @@ export default (db: Database) => {
 
       const { id: validId, limit: validLimit } = parsedResult.data
 
-      const result = await templatesRepository.getTemplates(validId, validLimit)
+      const result = await templatesRepository.getTemplates({id: validId, limit: validLimit})
 
       if (!result || result.length === 0) {
         throw new Error('No templates found')

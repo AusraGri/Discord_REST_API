@@ -4,19 +4,28 @@ import type { Templates, Database } from '@/database'
 export type TemplatesSelect = Selectable<Templates>
 export type TemplatesInsert = Insertable<Templates>
 
-export default (db: Database) => ({
-  getTemplates: async (
-    id?: number,
-    limit?: number
+interface GetTemplatesOptions {
+    id?: number;
+    limit?: number;
+  }
+
+export interface TemplatesRepository {
+    getTemplates (options?: GetTemplatesOptions): Promise<TemplatesSelect[] | []>
+    insertTemplate (template: TemplatesInsert): Promise<InsertResult>
+    patchTemplateById (template: TemplatesSelect): Promise<UpdateResult>
+}
+
+export default (db: Database) : TemplatesRepository => ({
+  getTemplates: async ( options: GetTemplatesOptions = {}
   ): Promise<TemplatesSelect[] | []> => {
     let query = db.selectFrom('templates').selectAll()
 
-    if (id !== undefined) {
-      query = query.where('id', '=', id)
+    if (options.id !== undefined) {
+      query = query.where('id', '=', options.id)
     }
 
-    if (limit !== undefined) {
-      query = query.limit(limit)
+    if (options.limit !== undefined && options.limit > 0) {
+      query = query.limit(options.limit)
     }
 
     return query.execute()
