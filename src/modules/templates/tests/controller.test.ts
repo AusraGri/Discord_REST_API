@@ -50,7 +50,8 @@ describe('GET /templates happy path', () => {
   })
 
   test('should respond with an error if id is wrong format', async () => {
-    const response = await supertest(app).get('/templates?id=cat')
+    const query = {id: 'cat'}
+    const response = await supertest(app).get('/templates').query(query)
     expect(response.statusCode).toBe(400)
     expect(response.body).toHaveProperty('error')
     expect(response.body.error).toBeTruthy()
@@ -74,5 +75,50 @@ describe('GET /templates sad path', () => {
       expect.stringContaining('json')
     )
     expect(response.body).toHaveProperty('error', 'No templates found')
+  })
+})
+
+describe('POST /templates', () => {
+
+  const templates = {
+    valid: {text: 'Congratulations to {username} who finished {sprint}!'},
+    invalid: {text: 'Congratulations to someone who finished some sprint!'},
+    noText: {text: ''},
+  }
+
+  test('should respond with a 201 status code', async () => {
+    const response = await supertest(app).post('/templates').send(templates.valid)
+    expect(response.statusCode).toBe(201)
+  })
+
+  test('should respond with a json message', async () => {
+    const response = await supertest(app).post('/templates').send(templates.valid)
+    expect(response.headers['content-type']).toEqual(
+      expect.stringContaining('json')
+    )
+    expect(response.body).toHaveProperty('text', 'Congratulations to {username} who finished {sprint}!')
+    expect(response.body).toHaveProperty('id')
+  })
+
+  test('should respond with a 400 status code if template text is invalid', async () => {
+    const response = await supertest(app).post('/templates').send(templates.invalid)
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toHaveProperty('error')
+  })
+
+  test('should respond with a 400 status code if template text is invalid', async () => {
+    const response = await supertest(app).post('/templates').send(templates.noText)
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toHaveProperty('error')
+  })
+
+  test('should respond with a 400 status code if no data is provided', async () => {
+    const response = await supertest(app).post('/templates')
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toHaveProperty('error')
+  })
+
+  afterAll(async () => {
+    await db.deleteFrom('templates').execute()
   })
 })

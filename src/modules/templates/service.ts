@@ -1,8 +1,10 @@
-import { requestSchema } from './schema'
+import { requestSchema, templateSchema } from './schema'
 import type { TemplatesRepository, TemplatesSelect } from './repository'
 
 export const parseTemplateQuery = (message: unknown) =>
   requestSchema.safeParse(message)
+export const parseTemplateText = (message: unknown) =>
+  templateSchema.safeParse(message)
 
 export async function getRandomTemplate (
   db: TemplatesRepository
