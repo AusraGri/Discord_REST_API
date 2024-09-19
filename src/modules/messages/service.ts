@@ -1,7 +1,7 @@
 import { MessagesSelect, MessageRepository } from './repository'
 import {requestSchema, payloadSchema} from './schema'
 
-interface createMessageOptions {
+interface CreateMessageOptions {
   username: string;
   sprintCode: string;
 }
@@ -28,11 +28,10 @@ export class MessageService {
   }
 }
 
-
 export const parseRequest = (message: unknown) => requestSchema.safeParse(message)
 export const parsePayload = (message: unknown) => payloadSchema.safeParse(message)
 
-export const createCongratulation = (options: createMessageOptions ) => {
+export const createCongratulation = (options: CreateMessageOptions ) => {
   // get random template (no template: error)
   // get random gif (no gif: error)
   // create template for discord and return it

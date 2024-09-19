@@ -85,8 +85,10 @@ describe('GET /messages', () => {
     const response = await supertest(app).get('/messages?username=John')
     expect(response.status).toBe(400)
     expect(response.body).toHaveProperty(
-      'error',
-      'No messages found'
+      'error'
+    )
+    expect(response.body.error).toHaveProperty(
+      'message', 'No messages found'
     )
   })
 

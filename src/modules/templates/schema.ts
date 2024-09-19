@@ -15,6 +15,10 @@ const requestSchema = z.object({
 })
 
 const templateSchema= z.object({
+ id: z
+ .number({
+  invalid_type_error: 'id must be a number',
+}),
   text: z
   .string({
     invalid_type_error: 'Template text must be a string'

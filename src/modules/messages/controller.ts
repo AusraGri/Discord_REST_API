@@ -8,43 +8,49 @@ import {
   parsePayload,
   MessageService,
 } from './service'
+import { buildMessageService } from './newservice';
 
 export default (db: Database) => {
   const router = Router()
 
   const messagesRepository :MessageRepository = buildRepository(db)
-  const messageService = new MessageService(messagesRepository)
+  // const messageService = new MessageService(messagesRepository)
 
-  router.get('/', async (req, res) => {
-    try {
-      const { username, sprint } = req.query
+  const messageService = buildMessageService(db);  // Inject the db and get the service functions
 
-      const parsedResult = parseRequest({ username, sprint })
+  // Use the methods from the service object
+  router.get('/', messageService.getMessages);
 
-      if (!parsedResult.success) {
-        res.status(400).json({ error: parsedResult.error.errors })
-        return
-      }
 
-      const { username: validUsername, sprint: validSprint } = parsedResult.data
+  // router.get('/', async (req, res) => {
+  //   try {
+  //     const userQuery = { ...req.query }
+  //     const parsedResult = parseRequest(userQuery)
 
-      const result: MessagesSelect[] | [] = await messageService.getMessages(
-        validUsername,
-        validSprint
-      )
+  //     if (!parsedResult.success) {
+  //       res.status(400).json({ error: parsedResult.error.errors })
+  //       return
+  //     }
 
-      if (!result || result.length === 0) {
-        throw new Error('No messages found')
-      }
+  //     const { username: validUsername, sprint: validSprint } = parsedResult.data
 
-      res.status(200).json(result)
-    } catch (error) {
-      assert(error instanceof Error)
-      res.status(400).json({
-        error: error.message,
-      })
-    }
-  })
+  //     const result: MessagesSelect[] | [] = await messageService.getMessages(
+  //       validUsername,
+  //       validSprint
+  //     )
+
+  //     if (!result || result.length === 0) {
+  //       throw new Error('No messages found')
+  //     }
+
+  //     res.status(200).json(result)
+  //   } catch (error) {
+  //     assert(error instanceof Error)
+  //     res.status(400).json({
+  //       error: error.message,
+  //     })
+  //   }
+  // })
 
   router.post('/', async (req, res) => {
     try {

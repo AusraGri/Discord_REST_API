@@ -4,6 +4,8 @@ import type { TemplatesRepository, TemplatesSelect } from './repository'
 export const parseTemplateQuery = (message: unknown) =>
   requestSchema.safeParse(message)
 export const parseTemplateText = (message: unknown) =>
+  templateSchema.omit({ id: true }).safeParse(message)
+export const parseTemplateUpdatable = (message: unknown) =>
   templateSchema.safeParse(message)
 
 export async function getRandomTemplate (
@@ -17,3 +19,5 @@ export async function getRandomTemplate (
 
   return allTemplates[randomIndex].text
 }
+
+

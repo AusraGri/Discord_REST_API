@@ -74,7 +74,8 @@ describe('GET /templates sad path', () => {
     expect(response.headers['content-type']).toEqual(
       expect.stringContaining('json')
     )
-    expect(response.body).toHaveProperty('error', 'No templates found')
+    expect(response.body).toHaveProperty('error')
+    expect(response.body.error).toHaveProperty('message', 'No templates found')
   })
 })
 
@@ -116,6 +117,43 @@ describe('POST /templates', () => {
     const response = await supertest(app).post('/templates')
     expect(response.statusCode).toBe(400)
     expect(response.body).toHaveProperty('error')
+  })
+
+  afterAll(async () => {
+    await db.deleteFrom('templates').execute()
+  })
+})
+
+
+describe('PATCH /templates', () => {
+  let templateId: number
+
+  beforeAll(async () => {
+    const [template] = await createTemplate([
+      { text: 'congratulations {username} for {sprint}!' },
+    ])
+    templateId = template.id
+  })
+
+  test('should respond with a 201 status after updating template', async () => {
+    const updateTemplate = {id: templateId, text: 'congratulations {username} for {sprint} is updated!'}
+    const response = await supertest(app).patch('/templates').send(updateTemplate)
+    expect(response.statusCode).toBe(200)
+  })
+
+  test('should respond with a 400 status if template id is invalid', async () => {
+    const updateTemplate = {id: 'cat', text: 'congratulations {username} for {sprint} is updated!'}
+    const response = await supertest(app).patch('/templates').send(updateTemplate)
+    expect(response.statusCode).toBe(400)
+  })
+
+  test('should respond with a json message of new updated template', async () => {
+    const updateTemplate = {id: templateId, text: 'congratulations {username} for {sprint} is updated!'}
+    const response = await supertest(app).patch('/templates').send(updateTemplate)
+    expect(response.headers['content-type']).toEqual(
+      expect.stringContaining('json')
+    )
+    expect(response.body).toHaveProperty('text', 'congratulations {username} for {sprint} is updated!')
   })
 
   afterAll(async () => {

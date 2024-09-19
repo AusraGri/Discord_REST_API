@@ -1,4 +1,4 @@
-import type { Selectable, Insertable, UpdateResult } from 'kysely'
+import type { Selectable, Insertable, UpdateObject } from 'kysely'
 import type { Templates, Database } from '@/database'
 
 export type TemplatesSelect = Selectable<Templates>
@@ -11,8 +11,8 @@ interface GetTemplatesOptions {
 
 export interface TemplatesRepository {
   getTemplates(options?: GetTemplatesOptions): Promise<TemplatesSelect[] | []>
-  insertTemplate(template: TemplatesInsert): Promise<TemplatesSelect>
-  patchTemplateById(template: TemplatesSelect): Promise<UpdateResult>
+  insertTemplate(template: TemplatesInsert): Promise<TemplatesSelect | undefined>
+  patchTemplate(template: TemplatesSelect): Promise<TemplatesSelect| undefined>
 }
 
 export default (db: Database): TemplatesRepository => ({
@@ -34,24 +34,32 @@ export default (db: Database): TemplatesRepository => ({
 
   insertTemplate: async (
     template: Omit<TemplatesInsert, 'id'>
-  ): Promise<TemplatesSelect> => {
+  ): Promise<TemplatesSelect | undefined> => {
     const newTemplate = await db
       .insertInto('templates')
       .values(template)
       .returningAll()
       .executeTakeFirst()
 
-    if (!newTemplate) {
-      throw new Error('Failed to insert template')
-    }
-
     return newTemplate
   },
 
-  patchTemplateById: async (template: TemplatesSelect): Promise<UpdateResult> =>
-    db
+  patchTemplate: async (
+    template: TemplatesSelect
+  ): Promise<TemplatesSelect | undefined> => {
+
+    await db
       .updateTable('templates')
       .set({ text: template.text })
       .where('id', '=', template.id)
-      .executeTakeFirst(),
+      .executeTakeFirst()
+
+      const updatedTemplate = await db
+    .selectFrom('templates')
+    .selectAll()
+    .where('id', '=', template.id)
+    .executeTakeFirst();
+
+    return updatedTemplate
+  },
 })
