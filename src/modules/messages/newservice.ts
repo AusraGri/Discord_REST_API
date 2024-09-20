@@ -6,7 +6,8 @@ import {
 import buildMessageRepository from './repository'
 import { MessageService } from './service'
 import { Database } from '@/database'
-import ClientError from '@/errors/ClientError'
+import BadRequest from '@/utils/errors/BadRequest'
+import NotFound from '@/utils/errors/NotFound'
 
 export const buildMessageService = (db: Database) => {
   const messagesRepository = buildMessageRepository(db)
@@ -29,7 +30,7 @@ export const buildMessageService = (db: Database) => {
       const messages = await messageServices.getMessages(username, sprint)
 
       if (!messages || messages.length === 0) {
-        throw new ClientError('No messages found')
+        throw new NotFound('No messages found')
       }
 
       res.status(200).json(messages)

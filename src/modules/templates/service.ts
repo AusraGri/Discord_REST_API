@@ -1,126 +1,99 @@
-import { Request, Response, NextFunction } from 'express'
+import { Request} from 'express'
 import buildTemplateRepository from './repository'
 import type { TemplatesSelect } from './repository'
 import templateValidators from './validators'
 import { Database } from '@/database'
-import ClientError from '@/errors/ClientError'
+import BadRequest from '@/utils/errors/BadRequest'
+import NotFound from '@/utils/errors/NotFound'
+
+export type DeleteTemplateResponse = {
+  message: string
+}
 
 export interface TemplateService {
-  getTemplates(req: Request, res: Response, next: NextFunction): Promise<void>
-  postTemplates(req: Request, res: Response, next: NextFunction): Promise<void>
-  patchTemplates(req: Request, res: Response, next: NextFunction): Promise<void>
-  deleteTemplates(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void>
+  getTemplates(req: Request): Promise<TemplatesSelect[]>
+  postTemplates(req: Request): Promise<TemplatesSelect>
+  patchTemplates(req: Request): Promise<TemplatesSelect>
+  deleteTemplates(req: Request): Promise<DeleteTemplateResponse>
 }
 
 export const buildTemplateService = (db: Database): TemplateService => {
   const templatesRepository = buildTemplateRepository(db)
   const validate = templateValidators()
 
-  const getTemplates = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const userRequest = { ...req.query }
-      const id = userRequest.id ? Number(userRequest.id) : undefined
-      const limit = userRequest.limit ? Number(userRequest.limit) : undefined
-      validate.parseTemplateQuery({ id, limit })
+  const getTemplates = async (req: Request): Promise<TemplatesSelect[]> => {
+    const userRequest = { ...req.query }
+    const id = userRequest.id ? Number(userRequest.id) : undefined
+    const limit = userRequest.limit ? Number(userRequest.limit) : undefined
+    validate.parseTemplateQuery({ id, limit })
 
-      const result = await templatesRepository.getTemplates({ id, limit })
+    const result: TemplatesSelect[] | [] =
+      await templatesRepository.getTemplates({ id, limit })
 
-      if (!result || result.length === 0) {
-        throw new ClientError('No templates found')
-      }
-
-      res.status(200).json(result)
-    } catch (error) {
-      next(error)
+    if (!result || result.length === 0) {
+      throw new NotFound('No templates found')
     }
+
+    return result
   }
 
-  const postTemplates = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const userRequest = { ...req.body }
-      const { text } = userRequest
+  const postTemplates = async (req: Request): Promise<TemplatesSelect> => {
+    const userRequest = { ...req.body }
+    const { text } = userRequest
 
-      validate.parseTemplateText({ text })
+    validate.parseTemplateText({ text })
 
-      const result: TemplatesSelect | undefined =
-        await templatesRepository.insertTemplate({
-          text,
-        })
-
-      if (!result) {
-        throw new Error('Failed to insert template')
-      }
-
-      res.status(201).json(result)
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  const patchTemplates = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const updatedTemplate = { ...req.body }
-
-      validate.parseTemplateUpdatable(updatedTemplate)
-
-      const templateExists = await templatesRepository.getTemplates({
-        id: updatedTemplate.id,
+    const result: TemplatesSelect | undefined =
+      await templatesRepository.insertTemplate({
+        text,
       })
 
-      if (!templateExists || templateExists.length === 0)
-        throw new ClientError('Invalid template id')
-
-      const result: TemplatesSelect | undefined =
-        await templatesRepository.patchTemplate(updatedTemplate)
-
-      if (!result) throw new Error('Failed to update')
-
-      res.status(200).json(result)
-    } catch (error) {
-      next(error)
+    if (!result) {
+      throw new Error('Failed to insert template')
     }
+
+    return result
   }
+
+  const patchTemplates = async (req: Request): Promise<TemplatesSelect> => {
+    const updatedTemplate = { ...req.body }
+
+    validate.parseTemplateUpdatable(updatedTemplate)
+
+    const templateExists = await templatesRepository.getTemplates({
+      id: updatedTemplate.id,
+    })
+
+    if (!templateExists || templateExists.length === 0)
+      throw new BadRequest('Invalid template id')
+
+    const result: TemplatesSelect | undefined =
+      await templatesRepository.patchTemplate(updatedTemplate)
+
+    if (!result) throw new Error('Failed to update')
+
+    return result
+  }
+
   const deleteTemplates = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const templateId = Number(req.params.id)
+    req: Request
+  ): Promise<DeleteTemplateResponse> => {
+    const templateId = Number(req.params.id)
 
-      validate.parseTemplateId({ id: templateId })
+    validate.parseTemplateId({ id: templateId })
 
-      const templateExists = await templatesRepository.getTemplates({
-        id: templateId,
-      })
+    const templateExists = await templatesRepository.getTemplates({
+      id: templateId,
+    })
 
-      if (!templateExists || templateExists.length === 0)
-        throw new ClientError('Invalid template id')
+    if (!templateExists || templateExists.length === 0)
+      throw new BadRequest('Invalid template id')
 
-      const result = await templatesRepository.deleteTemplate(templateId)
+    const result = await templatesRepository.deleteTemplate(templateId)
 
-      if (!result.numDeletedRows) throw new Error('Failed to delete')
+    if (!result.numDeletedRows) throw new Error('Failed to delete')
 
-      res.status(200).json({ message: 'Template deleted successfully' })
-    } catch (error) {
-      next(error)
-    }
+    return { message: 'Template deleted successfully' }
   }
 
   return { getTemplates, postTemplates, patchTemplates, deleteTemplates }

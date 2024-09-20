@@ -10,14 +10,14 @@ export interface Messages {
   gifUrl: string
   id: Generated<number>
   originalMessage: string
-  sprintId: string
+  sprintCode: string
   templateId: number
   userId: number
 }
 
 export interface Sprints {
   fullTitle: string
-  id: string
+  sprintCode: string
 }
 
 export interface Templates {

@@ -4,7 +4,7 @@ import type { Templates, Database } from '@/database'
 export type TemplatesSelect = Selectable<Templates>
 export type TemplatesInsert = Insertable<Templates>
 
-interface GetTemplatesOptions {
+export interface GetTemplatesOptions {
   id?: number
   limit?: number
 }
@@ -38,7 +38,7 @@ export default (db: Database): TemplatesRepository => ({
   insertTemplate: async (
     template: Omit<TemplatesInsert, 'id'>
   ): Promise<TemplatesSelect | undefined> => {
-    const newTemplate = await db
+    const newTemplate: TemplatesSelect | undefined = await db
       .insertInto('templates')
       .values(template)
       .returningAll()
@@ -56,7 +56,7 @@ export default (db: Database): TemplatesRepository => ({
       .where('id', '=', template.id)
       .executeTakeFirst()
 
-    const updatedTemplate = await db
+    const updatedTemplate: TemplatesSelect | undefined = await db
       .selectFrom('templates')
       .selectAll()
       .where('id', '=', template.id)

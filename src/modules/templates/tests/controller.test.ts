@@ -92,7 +92,7 @@ describe('POST /templates', () => {
     noText: { text: '' },
   }
 
-  test('should respond with a 201 status code', async () => {
+  test('should respond with a 201 status code after saving valid template', async () => {
     const response = await supertest(app)
       .post('/templates')
       .send(templates.valid)

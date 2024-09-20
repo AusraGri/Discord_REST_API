@@ -1,16 +1,25 @@
 import { Router } from 'express'
+import { StatusCodes } from 'http-status-codes'
 import type { Database } from '@/database'
 import { buildTemplateService } from './service'
+import { jsonRoute, unsupportedRoute } from '@/utils/middleware'
 
 export default (db: Database) => {
   const router = Router()
   const templateService = buildTemplateService(db)
 
   router
-  .get('/', templateService.getTemplates)
-  .post('/', templateService.postTemplates)
-  .patch('/', templateService.patchTemplates)
-  .delete('/:id', templateService.deleteTemplates)
+  .route('/')
+  .get(jsonRoute(templateService.getTemplates))
+  .post(jsonRoute(templateService.postTemplates, StatusCodes.CREATED))
+  .patch(jsonRoute(templateService.patchTemplates))
+
+  router
+  .route('/:id')
+  .delete(jsonRoute(templateService.deleteTemplates))
+  .get(unsupportedRoute)
+  .post(unsupportedRoute)
+  .patch(unsupportedRoute)
 
   return router
 }

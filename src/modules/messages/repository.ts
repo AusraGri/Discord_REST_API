@@ -27,15 +27,15 @@ export default (db: Database): MessageRepository => ({
     db
       .selectFrom('messages')
       .selectAll('messages')
-      .where('sprintId', '=', ids)
+      .where('sprintCode', '=', ids)
       .execute(),
 
-  findBySprintAndUsername: async (sprintId: string, username: string) =>
+  findBySprintAndUsername: async (sprint: string, username: string) =>
     db
       .selectFrom('messages')
       .innerJoin('users', 'users.id', 'messages.userId')
       .selectAll('messages')
       .where('users.username', '=', username)
-      .where('messages.sprintId', '=', sprintId)
+      .where('messages.sprintCode', '=', sprint)
       .execute(),
 })
