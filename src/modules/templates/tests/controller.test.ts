@@ -9,12 +9,15 @@ const app = createApp(db)
 const createTemplate = createFor(db, 'templates')
 
 describe('GET /templates happy path', () => {
+  let templateId: number
+
   beforeAll(async () => {
-    await createTemplate([
+    const [template] = await createTemplate([
       { text: 'congratulations1!' },
       { text: 'congratulations2!' },
       { text: 'congratulations3!' },
     ])
+    templateId = template.id
   })
 
   test('should respond with a 200 status code', async () => {
@@ -35,22 +38,25 @@ describe('GET /templates happy path', () => {
   })
 
   test('should get template by template id', async () => {
-    const response = await supertest(app).get('/templates?id=1')
+    const id = { id: templateId }
+    const response = await supertest(app).get('/templates').query(id)
     expect(response.body).toHaveLength(1)
   })
 
   test('should limit amount of templates', async () => {
-    const response = await supertest(app).get('/templates?limit=1')
-    expect(response.body).toHaveLength(1)
+    const limit = { limit: 2 }
+    const response = await supertest(app).get('/templates').query(limit)
+    expect(response.body).toHaveLength(2)
   })
 
   test('should work both, id and limit', async () => {
-    const response = await supertest(app).get('/templates?limit=5&id=1')
+    const query = { limit: 2, id: templateId }
+    const response = await supertest(app).get('/templates').query(query)
     expect(response.body).toHaveLength(1)
   })
 
   test('should respond with an error if id is wrong format', async () => {
-    const query = {id: 'cat'}
+    const query = { id: 'cat' }
     const response = await supertest(app).get('/templates').query(query)
     expect(response.statusCode).toBe(400)
     expect(response.body).toHaveProperty('error')
@@ -80,35 +86,45 @@ describe('GET /templates sad path', () => {
 })
 
 describe('POST /templates', () => {
-
   const templates = {
-    valid: {text: 'Congratulations to {username} who finished {sprint}!'},
-    invalid: {text: 'Congratulations to someone who finished some sprint!'},
-    noText: {text: ''},
+    valid: { text: 'Congratulations to {username} who finished {sprint}!' },
+    invalid: { text: 'Congratulations to someone who finished some sprint!' },
+    noText: { text: '' },
   }
 
   test('should respond with a 201 status code', async () => {
-    const response = await supertest(app).post('/templates').send(templates.valid)
+    const response = await supertest(app)
+      .post('/templates')
+      .send(templates.valid)
     expect(response.statusCode).toBe(201)
   })
 
   test('should respond with a json message', async () => {
-    const response = await supertest(app).post('/templates').send(templates.valid)
+    const response = await supertest(app)
+      .post('/templates')
+      .send(templates.valid)
     expect(response.headers['content-type']).toEqual(
       expect.stringContaining('json')
     )
-    expect(response.body).toHaveProperty('text', 'Congratulations to {username} who finished {sprint}!')
+    expect(response.body).toHaveProperty(
+      'text',
+      'Congratulations to {username} who finished {sprint}!'
+    )
     expect(response.body).toHaveProperty('id')
   })
 
   test('should respond with a 400 status code if template text is invalid', async () => {
-    const response = await supertest(app).post('/templates').send(templates.invalid)
+    const response = await supertest(app)
+      .post('/templates')
+      .send(templates.invalid)
     expect(response.statusCode).toBe(400)
     expect(response.body).toHaveProperty('error')
   })
 
   test('should respond with a 400 status code if template text is invalid', async () => {
-    const response = await supertest(app).post('/templates').send(templates.noText)
+    const response = await supertest(app)
+      .post('/templates')
+      .send(templates.noText)
     expect(response.statusCode).toBe(400)
     expect(response.body).toHaveProperty('error')
   })
@@ -124,7 +140,6 @@ describe('POST /templates', () => {
   })
 })
 
-
 describe('PATCH /templates', () => {
   let templateId: number
 
@@ -136,24 +151,98 @@ describe('PATCH /templates', () => {
   })
 
   test('should respond with a 201 status after updating template', async () => {
-    const updateTemplate = {id: templateId, text: 'congratulations {username} for {sprint} is updated!'}
-    const response = await supertest(app).patch('/templates').send(updateTemplate)
+    const updateTemplate = {
+      id: templateId,
+      text: 'congratulations {username} for {sprint} is updated!',
+    }
+    const response = await supertest(app)
+      .patch('/templates')
+      .send(updateTemplate)
     expect(response.statusCode).toBe(200)
   })
 
   test('should respond with a 400 status if template id is invalid', async () => {
-    const updateTemplate = {id: 'cat', text: 'congratulations {username} for {sprint} is updated!'}
-    const response = await supertest(app).patch('/templates').send(updateTemplate)
+    const updateTemplate = {
+      id: 'cat',
+      text: 'congratulations {username} for {sprint} is updated!',
+    }
+    const response = await supertest(app)
+      .patch('/templates')
+      .send(updateTemplate)
     expect(response.statusCode).toBe(400)
+    expect(response.body).toHaveProperty('error')
+    expect(response.body.error).toHaveProperty('message', 'Validation error')
+  })
+
+  test('should respond with a 400 status if template id does not exist', async () => {
+    const updateTemplate = {
+      id: 100,
+      text: 'congratulations {username} for {sprint} is updated!',
+    }
+    const response = await supertest(app)
+      .patch('/templates')
+      .send(updateTemplate)
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toHaveProperty('error')
+    expect(response.body.error).toHaveProperty('message', 'Invalid template id')
   })
 
   test('should respond with a json message of new updated template', async () => {
-    const updateTemplate = {id: templateId, text: 'congratulations {username} for {sprint} is updated!'}
-    const response = await supertest(app).patch('/templates').send(updateTemplate)
+    const updateTemplate = {
+      id: templateId,
+      text: 'congratulations {username} for {sprint} is updated!',
+    }
+    const response = await supertest(app)
+      .patch('/templates')
+      .send(updateTemplate)
     expect(response.headers['content-type']).toEqual(
       expect.stringContaining('json')
     )
-    expect(response.body).toHaveProperty('text', 'congratulations {username} for {sprint} is updated!')
+    expect(response.body).toHaveProperty(
+      'text',
+      'congratulations {username} for {sprint} is updated!'
+    )
+  })
+
+  afterAll(async () => {
+    await db.deleteFrom('templates').execute()
+  })
+})
+
+// test for delete endpoint
+describe('DELETE /templates ', () => {
+  let templateId: number
+
+  beforeAll(async () => {
+    const [template] = await createTemplate([
+      { text: 'congratulations {username} for {sprint}!' },
+    ])
+    templateId = template.id
+  })
+
+  test('should respond with a 200 status code and message when deleted successfully', async () => {
+    const response = await supertest(app).delete(`/templates/${templateId}`)
+    expect(response.statusCode).toBe(200)
+    expect(response.body).toHaveProperty(
+      'message',
+      'Template deleted successfully'
+    )
+  })
+
+  test('should respond with a 400 status code when template id is invalid', async () => {
+    const invalidId = 0
+    const response = await supertest(app).delete(`/templates/${invalidId}`)
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toHaveProperty('error')
+    expect(response.body.error).toHaveProperty('message', 'Validation error')
+  })
+
+  test('should respond with a 400 status code when template id is not found', async () => {
+    const invalidId = 1
+    const response = await supertest(app).delete(`/templates/${invalidId}`)
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toHaveProperty('error')
+    expect(response.body.error).toHaveProperty('message', 'Invalid template id')
   })
 
   afterAll(async () => {

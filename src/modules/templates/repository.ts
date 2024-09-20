@@ -1,4 +1,4 @@
-import type { Selectable, Insertable, UpdateObject } from 'kysely'
+import type { Selectable, Insertable, DeleteResult } from 'kysely'
 import type { Templates, Database } from '@/database'
 
 export type TemplatesSelect = Selectable<Templates>
@@ -11,8 +11,11 @@ interface GetTemplatesOptions {
 
 export interface TemplatesRepository {
   getTemplates(options?: GetTemplatesOptions): Promise<TemplatesSelect[] | []>
-  insertTemplate(template: TemplatesInsert): Promise<TemplatesSelect | undefined>
-  patchTemplate(template: TemplatesSelect): Promise<TemplatesSelect| undefined>
+  insertTemplate(
+    template: TemplatesInsert
+  ): Promise<TemplatesSelect | undefined>
+  patchTemplate(template: TemplatesSelect): Promise<TemplatesSelect | undefined>
+  deleteTemplate(id: number): Promise<DeleteResult>
 }
 
 export default (db: Database): TemplatesRepository => ({
@@ -47,19 +50,21 @@ export default (db: Database): TemplatesRepository => ({
   patchTemplate: async (
     template: TemplatesSelect
   ): Promise<TemplatesSelect | undefined> => {
-
     await db
       .updateTable('templates')
       .set({ text: template.text })
       .where('id', '=', template.id)
       .executeTakeFirst()
 
-      const updatedTemplate = await db
-    .selectFrom('templates')
-    .selectAll()
-    .where('id', '=', template.id)
-    .executeTakeFirst();
+    const updatedTemplate = await db
+      .selectFrom('templates')
+      .selectAll()
+      .where('id', '=', template.id)
+      .executeTakeFirst()
 
     return updatedTemplate
   },
+
+  deleteTemplate: async (id: number): Promise<DeleteResult> =>
+    db.deleteFrom('templates').where('id', '=', id).executeTakeFirst(),
 })

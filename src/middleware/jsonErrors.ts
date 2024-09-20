@@ -21,13 +21,9 @@ const jsonErrors: ErrorRequestHandler = (error, _req, res, _next) => {
     // eslint-disable-next-line no-console
     console.error(error)
   }
-
-  res.status(statusCode).json({
-    error: {
-      message: error.message ?? 'Internal server error',
-      ...error,
-    },
-  })
+  const errorResponse = formatErrorResponse(error)
+  
+  res.status(statusCode).json(errorResponse)
 }
 
 function getErrorStatusCode(error: Error) {
@@ -39,11 +35,32 @@ function getErrorStatusCode(error: Error) {
     return error.status
   }
 
-  // some implementation detail awareness
   if (error instanceof ZodError) return StatusCodes.BAD_REQUEST
 
-  // assume the worst
   return StatusCodes.INTERNAL_SERVER_ERROR
+}
+
+function formatErrorResponse(error: Error) {
+  if (error instanceof ZodError) {
+    // Extract and simplify the issues from the Zod error
+    const issues = error.issues.map(issue => ({
+      message: issue.message,
+      path: issue.path.join('.') 
+    }));
+
+    return {
+      error: {
+        message: 'Validation error',
+        issues
+      }
+    };
+  }
+
+  return {
+    error: {
+      message: error.message ?? 'Internal server error',
+    },
+  };
 }
 
 export default jsonErrors

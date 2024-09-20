@@ -7,12 +7,16 @@ const db = await createTestDatabase()
 const repository: TemplatesRepository = buildRepository(db)
 const createTemplate = createFor(db, 'templates')
 
+let templateId: number
+
 beforeAll(async () => {
-  await createTemplate([
+  const [template] = await createTemplate([
     { text: 'congratulations1!' },
     { text: 'congratulations2!' },
     { text: 'congratulations3!' },
   ])
+
+  templateId = template.id
 })
 
 describe('Queries for template table', () => {
@@ -22,7 +26,6 @@ describe('Queries for template table', () => {
   })
 
   test('should find templates by template id', async () => {
-    const templateId = 1
     const templateById = await repository.getTemplates({id: templateId})
     const expectedTemplate = { id: 1, text: 'congratulations1!' }
 
@@ -43,10 +46,33 @@ describe('Queries for template table', () => {
   })
 
   test('should return empty array if template by id is not found', async () => {
-    const templateId = 0
-    const limitedTemplates = await repository.getTemplates( {id: templateId})
+    const invalidId = 0
+    const limitedTemplates = await repository.getTemplates( {id: invalidId})
     expect(limitedTemplates.length).toBe(0)
   })
+
+  test('should add new template', async () => {
+    const newTemplate = {text: 'New template'}
+    const template = await repository.insertTemplate( newTemplate)
+    const allTemplates = await repository.getTemplates()
+    expect(allTemplates.length).toBe(4)
+    expect(template).toHaveProperty('text', 'New template')
+
+  })
+
+  test('should update template text', async () => {
+    const updatedTemplate = {id: templateId, text: 'Updated text'}
+    const template = await repository.patchTemplate( updatedTemplate)
+    expect(template).toEqual(updatedTemplate)
+  })
+
+  test('should delete template', async () => {
+    const template = await repository.deleteTemplate(templateId)
+    const allTemplates = await repository.getTemplates()
+    expect(allTemplates.length).toBe(3)
+    expect(template).toHaveProperty('numDeletedRows')
+  })
+
 })
 
 afterAll(async () => {
