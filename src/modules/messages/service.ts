@@ -1,38 +1,59 @@
-import { MessagesSelect, MessageRepository } from './repository'
-import {requestSchema, payloadSchema} from './schema'
+import { Request, Response, NextFunction } from 'express'
+import {
+  validateGetMessagesRequest,
+  validatePostMessageRequest,
+} from './validators'
+import buildMessageRepository from './repository'
+import { Database } from '@/database'
+import BadRequest from '@/utils/errors/BadRequest'
+import NotFound from '@/utils/errors/NotFound'
 
-interface CreateMessageOptions {
-  username: string;
-  sprintCode: string;
-}
-export class MessageService {
-  constructor(private readonly messagesRepository: MessageRepository) {}
+export const buildMessageService = (db: Database) => {
+  const messagesRepository = buildMessageRepository(db)
 
-  async getMessages(
-    username?: string,
-    sprint?: string
-  ): Promise<MessagesSelect[] | []> {
-    if (username && sprint) {
-      return this.messagesRepository.findBySprintAndUsername(sprint, username)
+  const getMessages = async (req: Request) => {
+    const userQuery = { ...req.query }
+    const parsedResult = validateGetMessagesRequest(userQuery)
+
+    const {limit} = parsedResult
+    const {username} = parsedResult
+    const sprintCode = parsedResult.sprint
+    const messages = await messagesRepository.getMessages({
+      username,
+      sprintCode,
+      limit,
+    })
+
+    if (!messages || messages.length === 0) {
+      throw new NotFound('No messages found')
     }
-
-    if (username) {
-      return this.messagesRepository.findByUsername(username)
-    }
-
-    if (sprint) {
-      return this.messagesRepository.findBySprint(sprint)
-    }
-
-    return this.messagesRepository.findAll()
+    return messages
   }
-}
 
-export const parseRequest = (message: unknown) => requestSchema.safeParse(message)
-export const parsePayload = (message: unknown) => payloadSchema.safeParse(message)
+  const createCongratulation = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const parsedResult = validatePostMessageRequest(req.body)
+      if (!parsedResult.success) {
+        return res.status(400).json({ error: parsedResult.error.errors })
+      }
 
-export const createCongratulation = (options: CreateMessageOptions ) => {
-  // get random template (no template: error)
-  // get random gif (no gif: error)
-  // create template for discord and return it
+      const template = await getTemplate() // Fetch a random template
+      if (!template) throw new Error('No template found')
+
+      const { username, sprintCode } = parsedResult.data
+      const message = createCongratulationMessage(username, sprintCode)
+
+      await messagesRepository.saveMessage(message)
+
+      res.status(201).json({ message: 'Message created successfully' })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  return { getMessages, createCongratulation }
 }

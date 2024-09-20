@@ -3,8 +3,9 @@ import jsonErrorHandler from './middleware/jsonErrors'
 import { type Database } from './database'
 import messages from './modules/messages/controller'
 import templates from './modules/templates/controller'
+import sprints from './modules/sprints/controller'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 export default function createApp(db: Database) {
   const app = express()
 
@@ -13,6 +14,7 @@ export default function createApp(db: Database) {
   // register your controllers here
   app.use('/messages', messages(db))
   app.use('/templates', templates(db))
+  app.use('/sprints', sprints(db))
 
   app.use(jsonErrorHandler)
 

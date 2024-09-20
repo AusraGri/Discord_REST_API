@@ -16,6 +16,12 @@ const requestSchema = z.object({
   .trim()
   .min(3, { message: 'Must be 3 or more characters long' })
   .optional(),
+  limit: z
+  .number({
+    invalid_type_error: 'Limit must be a number',
+  })
+  .positive()
+  .optional(),
 })
 
 const payloadSchema = z.object({

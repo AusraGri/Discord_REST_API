@@ -70,9 +70,9 @@ describe('GET /templates happy path', () => {
 
 // sad path tests
 describe('GET /templates sad path', () => {
-  test('should respond with a 400 status code if there are no templates', async () => {
+  test('should respond with a 404 status code if there are no templates', async () => {
     const response = await supertest(app).get('/templates')
-    expect(response.statusCode).toBe(400)
+    expect(response.statusCode).toBe(404)
   })
 
   test('should respond with a json error message', async () => {

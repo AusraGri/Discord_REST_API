@@ -1,7 +1,6 @@
 import { type ErrorRequestHandler } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ZodError } from 'zod'
-import ClientError from '@/errors/ClientError'
 
 
 const { NODE_ENV } = process.env
@@ -27,9 +26,6 @@ const jsonErrors: ErrorRequestHandler = (error, _req, res, _next) => {
 }
 
 function getErrorStatusCode(error: Error) {
-  if (error instanceof ClientError) {
-    return error.status;
-  }
 
   if ('status' in error && typeof error.status === 'number') {
     return error.status
