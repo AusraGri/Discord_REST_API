@@ -12,6 +12,11 @@ export const sprintSchema = z.object({
     })
     .trim()
     .min(5, { message: 'Must be 5 or more' }),
+    id: z
+    .number({
+      invalid_type_error: 'id must be a number',
+    })
+    .positive()
 })
 
 export const querySchema = z.object({

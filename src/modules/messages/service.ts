@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
+import { EmbedBuilder, userMention } from 'discord.js'
 import {
   validateGetMessagesRequest,
   validatePostMessageRequest,
@@ -7,16 +8,18 @@ import buildMessageRepository from './repository'
 import { Database } from '@/database'
 import BadRequest from '@/utils/errors/BadRequest'
 import NotFound from '@/utils/errors/NotFound'
+import DiscordBotService from '../discord/discordServide'
+// import discordBot from '../discord/discordClient'
 
-export const buildMessageService = (db: Database) => {
+export const buildMessageService = (db: Database, discordBot: DiscordBotService) => {
   const messagesRepository = buildMessageRepository(db)
 
   const getMessages = async (req: Request) => {
     const userQuery = { ...req.query }
     const parsedResult = validateGetMessagesRequest(userQuery)
 
-    const {limit} = parsedResult
-    const {username} = parsedResult
+    const { limit } = parsedResult
+    const { username } = parsedResult
     const sprintCode = parsedResult.sprint
     const messages = await messagesRepository.getMessages({
       username,
@@ -32,27 +35,33 @@ export const buildMessageService = (db: Database) => {
 
   const createCongratulation = async (
     req: Request,
-    res: Response,
-    next: NextFunction
   ) => {
-    try {
-      const parsedResult = validatePostMessageRequest(req.body)
-      if (!parsedResult.success) {
-        return res.status(400).json({ error: parsedResult.error.errors })
-      }
 
-      const template = await getTemplate() // Fetch a random template
-      if (!template) throw new Error('No template found')
+    const user = userMention('962096516175114271')
+    const embed = new EmbedBuilder()
+    .setColor('#0099ff')
+    .setTitle('Mention Example')
+    .setDescription(`Hello ${user}, this is your mention in an embed!`)
+    .setTimestamp();
+    if (discordBot.isBotReady()) {
+      await discordBot.sendMessage({ embeds: [embed] });
+      const users = await discordBot.getAllUsersFromChannel()
+     await discordBot.sendMessage(`${users[0].id} and ${users[0].username}`)
+  }
 
-      const { username, sprintCode } = parsedResult.data
-      const message = createCongratulationMessage(username, sprintCode)
+    // const parsedResult = validatePostMessageRequest(req.body)
 
-      await messagesRepository.saveMessage(message)
+    // const template = await getTemplate() // Fetch a random template
+    // if (!template) throw new Error('No template found')
 
-      res.status(201).json({ message: 'Message created successfully' })
-    } catch (error) {
-      next(error)
-    }
+    // const { username, sprintCode } = parsedResult.data
+    // const message = createCongratulationMessage(username, sprintCode)
+
+    // await messagesRepository.saveMessage(message)
+
+    // res.status(201).json({ message: 'Message created successfully' })
+
+    return 'success'
   }
 
   return { getMessages, createCongratulation }

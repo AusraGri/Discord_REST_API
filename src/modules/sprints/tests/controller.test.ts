@@ -1,6 +1,7 @@
 import supertest from 'supertest'
 import createTestDatabase from '@tests/utils/createTestDatabase'
 import { createFor } from '@tests/utils/records'
+import cleanDatabase from '@tests/utils/createTestDatabase/cleanDatabase'
 import createApp from '@/app'
 import * as fixtures from './fixtures'
 import { SprintSelect } from '../repository'
@@ -16,7 +17,7 @@ describe('GET /sprints happy path', () => {
   let expectedSprint: SprintSelect
 
   beforeAll(async () => {
-    await db.deleteFrom('sprints').execute()
+    await cleanDatabase(db)
     const [sprint] = await createSprints(fixtures.sprints)
     testSprintCode = sprint.sprintCode
     expectedSprint = sprint

@@ -1,6 +1,7 @@
 import supertest from 'supertest'
 import createTestDatabase from '@tests/utils/createTestDatabase'
 import { createFor } from '@tests/utils/records'
+import cleanDatabase from '@tests/utils/createTestDatabase/cleanDatabase'
 import createApp from '@/app'
 
 const db = await createTestDatabase()
@@ -12,6 +13,7 @@ describe('GET /templates happy path', () => {
   let templateId: number
 
   beforeAll(async () => {
+    await cleanDatabase(db)
     const [template] = await createTemplate([
       { text: 'congratulations1!' },
       { text: 'congratulations2!' },
@@ -64,7 +66,7 @@ describe('GET /templates happy path', () => {
   })
 
   afterAll(async () => {
-    await db.deleteFrom('templates').execute()
+    await cleanDatabase(db)
   })
 })
 
@@ -136,7 +138,7 @@ describe('POST /templates', () => {
   })
 
   afterAll(async () => {
-    await db.deleteFrom('templates').execute()
+    await cleanDatabase(db)
   })
 })
 
@@ -144,6 +146,7 @@ describe('PATCH /templates', () => {
   let templateId: number
 
   beforeAll(async () => {
+    await cleanDatabase(db)
     const [template] = await createTemplate([
       { text: 'congratulations {username} for {sprint}!' },
     ])
@@ -205,7 +208,7 @@ describe('PATCH /templates', () => {
   })
 
   afterAll(async () => {
-    await db.deleteFrom('templates').execute()
+    await cleanDatabase(db)
   })
 })
 
@@ -246,6 +249,6 @@ describe('DELETE /templates ', () => {
   })
 
   afterAll(async () => {
-    await db.deleteFrom('templates').execute()
+    await cleanDatabase(db)
   })
 })

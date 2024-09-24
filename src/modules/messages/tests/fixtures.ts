@@ -1,4 +1,4 @@
-export const users = [{ username: 'Bob' }, {username: 'Rob'}]
+export const users = [{id: 1, username: 'Bob' }, {id: 2, username: 'Rob'}]
 export const sprints = [
   {
     sprintCode: 'WD-1.1',
@@ -17,21 +17,30 @@ export const messages = [
     gifUrl: 'some url',
     originalMessage: 'congratulations!',
     sprintCode: 'WD-1.1',
+    sprintId: 1,
+    sprintTitle: 'First Steps Into Programming with Python',
     templateId: 1,
-    userId: 1,
-  },
-  {
-    gifUrl: 'some url',
-    originalMessage: 'congratulations!',
-    sprintCode: 'WD-1.1',
-    templateId: 1,
-    userId: 1,
+    templateText: 'congratulations!',
+    username: 'Bob',
   },
   {
     gifUrl: 'some url',
     originalMessage: 'congratulations!',
     sprintCode: 'WD-2.1',
+    sprintId: 2,
+    sprintTitle: 'Second Steps Into Programming with Python',
     templateId: 1,
-    userId: 2,
+    templateText: 'congratulations!',
+    username: 'Bob',
+  },
+  {
+    gifUrl: 'some url',
+    originalMessage: 'congratulations!',
+    sprintCode: 'WD-1.1',
+    sprintId: 1,
+    sprintTitle: 'First Steps Into Programming with Python',
+    templateId: 1,
+    templateText: 'congratulations!',
+    username: 'Rob',
   },
 ]

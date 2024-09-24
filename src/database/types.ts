@@ -11,12 +11,16 @@ export interface Messages {
   id: Generated<number>
   originalMessage: string
   sprintCode: string
+  sprintId: number
+  sprintTitle: string
   templateId: number
-  userId: number
+  templateText: string
+  username: string
 }
 
 export interface Sprints {
   fullTitle: string
+  id: Generated<number>
   sprintCode: string
 }
 
@@ -26,7 +30,7 @@ export interface Templates {
 }
 
 export interface Users {
-  id: Generated<number>
+  id: number
   username: string
 }
 

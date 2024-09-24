@@ -12,11 +12,12 @@ export default (db: Database) => {
   .route('/')
   .get(jsonRoute(sprintService.getSprints))
   .post(jsonRoute(sprintService.postSprints, StatusCodes.CREATED))
-  .patch(jsonRoute(sprintService.patchSprints))
+  // .patch(jsonRoute(sprintService.patchSprints))
 
   router
-  .route('/:sprintCode')
+  .route('/:sprintId')
   .delete(jsonRoute(sprintService.deleteSprints))
+  .patch(jsonRoute(sprintService.patchSprints))
   .get(unsupportedRoute)
   .post(unsupportedRoute)
   .patch(unsupportedRoute)

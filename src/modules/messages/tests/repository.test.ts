@@ -1,5 +1,6 @@
 import createTestDatabase from '@tests/utils/createTestDatabase'
 import { createFor } from '@tests/utils/records'
+import cleanDatabase from '@tests/utils/createTestDatabase/cleanDatabase'
 import buildRepository from '../repository'
 import * as fixtures from './fixtures'
 
@@ -12,10 +13,11 @@ const createUser = createFor(db, 'users')
 const createTemplate = createFor(db, 'templates')
 
 beforeAll(async () => {
-  await db.deleteFrom('messages').execute()
-  await db.deleteFrom('users').execute()
-  await db.deleteFrom('sprints').execute()
-  await db.deleteFrom('templates').execute()
+  await cleanDatabase(db)
+  // await db.deleteFrom('messages').execute()
+  // await db.deleteFrom('users').execute()
+  // await db.deleteFrom('sprints').execute()
+  // await db.deleteFrom('templates').execute()
   await createSprint(fixtures.sprints)
   await createTemplate(fixtures.templates)
   await createUser(fixtures.users)
@@ -36,7 +38,7 @@ describe('Queries for messages table', () => {
     expect(allMessages.length).toBe(1)
   })
 
-  test('should find messages by user id', async () => {
+  test('should find messages by username', async () => {
     const messagesByUsername = await repository.getMessages({username: 'Bob'})
     expect(messagesByUsername.length).toBe(2)
   })

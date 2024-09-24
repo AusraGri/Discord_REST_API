@@ -28,8 +28,7 @@ export default (db: Database): MessageRepository => ({
 
     if (options.username !== undefined) {
       query = query
-        .innerJoin('users', 'users.id', 'messages.userId')
-        .where('users.username', '=', options.username)
+        .where('username', '=', options.username)
     }
 
     if (options.sprintCode !== undefined) {
@@ -49,9 +48,8 @@ export default (db: Database): MessageRepository => ({
   findByUsername: async (username: string): Promise<MessagesSelect[]> =>
     db
       .selectFrom('messages')
-      .innerJoin('users', 'users.id', 'messages.userId')
       .selectAll('messages')
-      .where('users.username', '=', username)
+      .where('username', '=', username)
       .execute(),
 
   findBySprint: async (ids: string) =>

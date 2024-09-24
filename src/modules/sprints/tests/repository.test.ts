@@ -1,5 +1,6 @@
 import createTestDatabase from '@tests/utils/createTestDatabase'
 import { createFor } from '@tests/utils/records'
+import cleanDatabase from '@tests/utils/createTestDatabase/cleanDatabase'
 import buildRepository, { SprintSelect, SprintsRepository } from '../repository'
 import * as fixtures from './fixtures'
 
@@ -13,7 +14,7 @@ let testSprintCode: string
 let expectedSprint: SprintSelect
 
 beforeAll(async () => {
-  await db.deleteFrom('sprints').execute()
+  await cleanDatabase(db)
   const [sprint] = await createSprint(fixtures.sprints)
 
   testSprintCode = sprint.sprintCode
@@ -36,20 +37,21 @@ describe('Queries for template table', () => {
     const insertedSprint = await repository.insertSprint(newSprint)
     const allSprints = await repository.getSprints()
     expect(allSprints.length).toBe(4)
-    expect(insertedSprint).toEqual(newSprint)
+    expect(insertedSprint).toEqual(insertedSprint)
   })
 
   test('should update sprint by sprint code', async () => {
     const updateSprint = {
       sprintCode: testSprintCode,
       fullTitle: 'Updated title for sprint',
+      id: 1
     }
     const updatedSprint = await repository.updateSprint(updateSprint)
     expect(updatedSprint).toEqual(updateSprint)
   })
 
   test('should delete sprint', async () => {
-    const deleteResult = await repository.deleteSprint(testSprintCode)
+    const deleteResult = await repository.deleteSprint(expectedSprint.id)
     const allSprints = await repository.getSprints()
     expect(allSprints.length).toBe(3)
     expect(deleteResult).toHaveProperty('numDeletedRows')

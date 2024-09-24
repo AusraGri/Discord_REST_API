@@ -79,22 +79,24 @@ export const buildSprintService = (db: Database): SprintService => {
   const deleteSprints = async (
     req: Request
   ): Promise<DeleteSprintResponse> => {
-    const {sprintCode} = req.params
+    const {sprintId} = req.params
 
-    validate.parseSprintCode({ sprintCode })
+    const id = Number(sprintId)
+
+    validate.parseSprintId({ sprintId: id })
 
     const sprintExists = await sprintRepository.getSprints({
-      sprintCode
+      sprintId: id
     })
 
     if (!sprintExists || sprintExists.length === 0)
-      throw new BadRequest('Invalid template id')
+      throw new BadRequest('Invalid sprint id')
 
-    const result = await sprintRepository.deleteSprint(sprintCode)
+    const result = await sprintRepository.deleteSprint(id)
 
     if (!result.numDeletedRows) throw new Error('Failed to delete')
 
-    return { message: 'Template deleted successfully' }
+    return { message: 'Sprint deleted successfully' }
   }
 
   return { getSprints, postSprints, patchSprints, deleteSprints }

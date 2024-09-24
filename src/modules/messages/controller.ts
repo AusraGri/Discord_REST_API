@@ -1,37 +1,26 @@
 import { Router } from 'express'
 import type { Database } from '@/database'
 import { buildMessageService } from './service'
-import { jsonRoute, unsupportedRoute } from '@/utils/middleware'
+import { jsonRoute } from '@/utils/middleware'
+import DiscordBotService from '../discord/discordServide'
+
 
 export default (db: Database) => {
   const router = Router()
 
-  const messageService = buildMessageService(db) // Inject the db and get the service functions
+  const { DISCORD_BOT_TOKEN, CHANNEL_ID } = process.env
 
-  router.route('/').get(jsonRoute(messageService.getMessages))
+  if (!DISCORD_BOT_TOKEN || !CHANNEL_ID) {
+      throw new Error('Discord bot token or channel ID is not defined in environment variables.');
+    }
+  const discordBot = new DiscordBotService(DISCORD_BOT_TOKEN, CHANNEL_ID);
+  const users = discordBot.getAllUsersFromChannel()
+  const messageService = buildMessageService(db, discordBot) // Inject the db and get the service functions
 
-  // router.post('/', async (req, res) => {
-  //   try {
-  //     const { username, sprintCode } = req.body
-
-  //     const parsedResult = parsePayload({ username, sprintCode })
-
-  //     if (!parsedResult.success) {
-  //       res.status(400).json({ error: parsedResult.error.errors })
-  //       return
-  //     }
-
-  //     const { username: validUsername, sprintCode: validSprintCode } =
-  //       parsedResult.data
-
-  //     const congratulationMessage = createCongratulation(username, sprintCode)
-  //   } catch (error) {
-  //     assert(error instanceof Error)
-  //     res.status(400).json({
-  //       error: error.message,
-  //     })
-  //   }
-  // })
+  router
+  .route('/')
+  .get(jsonRoute(messageService.getMessages))
+  .post(jsonRoute(messageService.createCongratulation))
 
   return router
 }

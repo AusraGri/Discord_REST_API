@@ -1,9 +1,11 @@
-import { Kysely } from 'kysely'
+import { Kysely, Insertable } from 'kysely'
 import type { Sprints } from '../types'
 
+
+type SprintInsert = Insertable<Sprints>
 export const timestamp = new Date('20240917135110Z')
 
-const SPRINT_IDS: Sprints[] = [
+const SPRINT_IDS: SprintInsert[] = [
   { sprintCode: 'WD-1.1', fullTitle: 'First Steps Into Programming with Python' },
   { sprintCode: 'WD-1.2', fullTitle: 'Intermediate Programming with Python' },
   { sprintCode: 'WD-1.3', fullTitle: 'Object Oriented Programming' },
