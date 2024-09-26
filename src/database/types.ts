@@ -5,6 +5,11 @@ export type Generated<T> =
     ? ColumnType<S, I | undefined, U>
     : ColumnType<T, T | undefined, T>
 
+export interface Images {
+  id: number
+  url: string
+}
+
 export interface Messages {
   createdAt: Generated<string>
   gifUrl: string
@@ -30,11 +35,12 @@ export interface Templates {
 }
 
 export interface Users {
-  id: number
+  id: string
   username: string
 }
 
 export interface DB {
+  images: Images
   messages: Messages
   sprints: Sprints
   templates: Templates

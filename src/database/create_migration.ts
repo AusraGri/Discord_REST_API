@@ -1,6 +1,7 @@
 import fs from 'fs/promises'
 import * as path from 'path'
 import { fileURLToPath } from 'node:url'
+import Logger from '@/utils/errors/ErrorLogger'
 
 const MIGRATIONS_PATH = './migrations'
 
@@ -21,7 +22,8 @@ function getTimestamp(): string {
 const migrationName = process.argv[2]
 
 if (!migrationName) {
-  throw new Error('Please provide a migration name.')
+  Logger.error('Please provide a migration name.')
+  process.exit(0)
 }
 
 // Create the filename with the timestamp

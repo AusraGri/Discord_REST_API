@@ -1,5 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
-import { EmbedBuilder, userMention } from 'discord.js'
+import { Request } from 'express'
 import {
   validateGetMessagesRequest,
   validatePostMessageRequest,
@@ -8,12 +7,26 @@ import buildMessageRepository from './repository'
 import { Database } from '@/database'
 import BadRequest from '@/utils/errors/BadRequest'
 import NotFound from '@/utils/errors/NotFound'
-import DiscordBotService from '../discord/discordServide'
-// import discordBot from '../discord/discordClient'
+import DiscordBotService from '../discord/discordBotService'
+import refreshUsersData from '../users/utils/refreshUsersData'
+import getRandomTemplate from './utils/getTemplate'
+import buildSprintsRepository from '@/modules/sprints/repository'
+import formDiscordMessage from './utils/formMessage'
+import { getGifs } from '../images/fetchImages'
+import usersManager, { UsersManager } from '../users/utils/usersManager'
+import Logger from '@/utils/errors/ErrorLogger'
+import { GIPHY_API_KEY } from '@/config/config'
+import getRandomImageUrl from './utils/getRandomImage'
 
-export const buildMessageService = (db: Database, discordBot: DiscordBotService) => {
+export const buildMessageService = (
+  db: Database,
+  discordBot: DiscordBotService
+) => {
   const messagesRepository = buildMessageRepository(db)
 
+  refreshUsersData(db, discordBot)
+
+  // Manages endpoint requests for getting messages / GET
   const getMessages = async (req: Request) => {
     const userQuery = { ...req.query }
     const parsedResult = validateGetMessagesRequest(userQuery)
@@ -30,39 +43,76 @@ export const buildMessageService = (db: Database, discordBot: DiscordBotService)
     if (!messages || messages.length === 0) {
       throw new NotFound('No messages found')
     }
+
     return messages
   }
 
-  const createCongratulation = async (
-    req: Request,
-  ) => {
+  // Manages endpoint requests for sending messages to Discord / POST
+  const sendCongratulationMessage = async (req: Request) => {
+    const sprintsRepository = buildSprintsRepository(db)
 
-    const user = userMention('962096516175114271')
-    const embed = new EmbedBuilder()
-    .setColor('#0099ff')
-    .setTitle('Mention Example')
-    .setDescription(`Hello ${user}, this is your mention in an embed!`)
-    .setTimestamp();
-    if (discordBot.isBotReady()) {
-      await discordBot.sendMessage({ embeds: [embed] });
-      const users = await discordBot.getAllUsersFromChannel()
-     await discordBot.sendMessage(`${users[0].id} and ${users[0].username}`)
+    const { username, sprintCode } = req.body
+
+    validatePostMessageRequest({ username, sprintCode })
+
+    const users: UsersManager = usersManager(db, discordBot)
+
+    const user = await users.getUser(username)
+
+    if (!user) throw new BadRequest('Username does not exist in the Discord')
+
+    const template = await getRandomTemplate(db)
+
+    const [sprint] = await sprintsRepository.getSprints({ sprintCode })
+
+    if (!sprint)
+      throw new BadRequest('Sprint code is invalid. Not found in the database')
+
+    const message = await formDiscordMessage({
+      template: template.text,
+      user,
+      sprintTitle: sprint.fullTitle,
+    })
+
+    const images = await getGifs(GIPHY_API_KEY)
+
+    const url = getRandomImageUrl(images)
+
+    const messageSent = await discordBot.sendMessage({
+      content: `${message}`,
+      files: [url],
+    })
+    Logger.info(messageSent.content)
+
+    if (!messageSent) throw new Error('Failed to send the message')
+
+    const messageData = {
+      gifUrl: url,
+      originalMessage: messageSent.content,
+      sprintCode,
+      sprintId: sprint.id,
+      sprintTitle: sprint.fullTitle,
+      templateId: template.id,
+      templateText: template.text,
+      username,
+    }
+
+    const isMessageDataSaved = messagesRepository.insertMessage(messageData)
+
+    if (!isMessageDataSaved)
+      throw new Error('Failed to save sent message data to the database')
+
+    return {message: `Message to the Discord user: ${username} was sent at: ${messageSent.createdAt}` }
   }
 
-    // const parsedResult = validatePostMessageRequest(req.body)
+  return { getMessages, sendCongratulationMessage }
+}
 
-    // const template = await getTemplate() // Fetch a random template
-    // if (!template) throw new Error('No template found')
-
-    // const { username, sprintCode } = parsedResult.data
-    // const message = createCongratulationMessage(username, sprintCode)
-
-    // await messagesRepository.saveMessage(message)
-
-    // res.status(201).json({ message: 'Message created successfully' })
-
-    return 'success'
-  }
-
-  return { getMessages, createCongratulation }
+// const request = {
+//   username: 'bcor_',
+//   sprintCode: 'WD-1.1',
+// }
+const request1 = {
+  username: 'kinoreples',
+  sprintCode: 'WD-8.1',
 }

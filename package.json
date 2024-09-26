@@ -39,6 +39,7 @@
     "vitest": "^1.5.2"
   },
   "dependencies": {
+    "@giphy/js-fetch-api": "^5.6.0",
     "better-sqlite3": "^9.5.0",
     "discord.js": "^14.16.2",
     "dotenv": "^16.4.5",

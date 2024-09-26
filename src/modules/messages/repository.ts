@@ -1,8 +1,9 @@
-import type { Selectable } from 'kysely'
+import type { Selectable, Insertable } from 'kysely'
 import type { Database, Messages } from '@/database'
 
 export type MessagesSelect = Selectable<Messages>
 
+export type MessagesInsert = Insertable<Messages>
 export interface GetMessagesOptions {
   username?: string
   sprintCode?: string
@@ -19,7 +20,10 @@ export interface MessageRepository {
     username: string
   ): Promise<MessagesSelect[] | []>
   findAll(): Promise<MessagesSelect[] | []>
+  insertMessage(message: MessagesInsert): Promise<MessagesSelect | undefined>
+
 }
+
 export default (db: Database): MessageRepository => ({
   getMessages: async (
     options: GetMessagesOptions = {}
@@ -62,9 +66,11 @@ export default (db: Database): MessageRepository => ({
   findBySprintAndUsername: async (sprint: string, username: string) =>
     db
       .selectFrom('messages')
-      .innerJoin('users', 'users.id', 'messages.userId')
       .selectAll('messages')
-      .where('users.username', '=', username)
+      .where('username', '=', username)
       .where('messages.sprintCode', '=', sprint)
       .execute(),
+
+  insertMessage: async (message: MessagesInsert) => db.insertInto('messages').values(message).returningAll()
+  .executeTakeFirst()
 })

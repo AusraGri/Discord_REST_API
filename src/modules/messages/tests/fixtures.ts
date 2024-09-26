@@ -1,4 +1,4 @@
-export const users = [{id: 1, username: 'Bob' }, {id: 2, username: 'Rob'}]
+export const users = [{id: '1', username: 'Bob' }, {id: '2', username: 'Rob'}]
 export const sprints = [
   {
     sprintCode: 'WD-1.1',
