@@ -1,10 +1,10 @@
-import { Request} from 'express'
+import { Request } from 'express'
 import buildSprintRepository from './repository'
 import type { SprintSelect } from './repository'
 import { Database } from '@/database'
 import BadRequest from '@/utils/errors/BadRequest'
 import NotFound from '@/utils/errors/NotFound'
-import sprintValidators from './validators';
+import sprintValidators from './validators'
 
 export type DeleteSprintResponse = {
   message: string
@@ -25,11 +25,19 @@ export const buildSprintService = (db: Database): SprintService => {
     const userRequest = { ...req.query }
     const sprintC = userRequest.sprintCode
     const limitIs = userRequest.limit ? Number(userRequest.limit) : undefined
+    const sprintId = userRequest.id ? Number(userRequest.id) : undefined
 
-    const {sprintCode, limit} = validate.parseSprintQuery({sprintCode: sprintC, limit: limitIs})
+    const { sprintCode, limit } = validate.parseSprintQuery({
+      sprintCode: sprintC,
+      limit: limitIs,
+      id: sprintId,
+    })
 
-    const result: SprintSelect[] | [] =
-      await sprintRepository.getSprints({ sprintCode, limit })
+    const result: SprintSelect[] | [] = await sprintRepository.getSprints({
+      sprintCode,
+      limit,
+      sprintId,
+    })
 
     if (!result || result.length === 0) {
       throw new NotFound('No sprints found')
@@ -42,11 +50,15 @@ export const buildSprintService = (db: Database): SprintService => {
     const userRequest = { ...req.body }
     const { sprintCode, fullTitle } = userRequest
 
-    validate.parseSprint({ sprintCode, fullTitle })
+    validate.parseSprintUpdatable({ sprintCode, fullTitle })
+const [sprintCodeExist] = await sprintRepository.getSprints({sprintCode})
 
-    const result: SprintSelect | undefined =
+if(sprintCodeExist) throw new BadRequest('Sprint code already in the database')
+
+const result: SprintSelect | undefined =
       await sprintRepository.insertSprint({
-        sprintCode, fullTitle
+        sprintCode,
+        fullTitle,
       })
 
     if (!result) {
@@ -57,42 +69,43 @@ export const buildSprintService = (db: Database): SprintService => {
   }
 
   const patchSprints = async (req: Request): Promise<SprintSelect> => {
+    const sprintId = Number(req.params.id)
+
     const updatedSprint = { ...req.body }
 
-    validate.parseSprint(updatedSprint)
+    validate.parseSprintUpdatable(updatedSprint)
+    validate.parseSprintId({id:sprintId})
 
-    const sprintExists = await sprintRepository.getSprints({
-      sprintCode: updatedSprint.sprintCode,
+    const [sprintExists] = await sprintRepository.getSprints({
+      sprintId
     })
 
-    if (!sprintExists || sprintExists.length === 0)
-      throw new BadRequest('Invalid sprint id')
+    if (!sprintExists)
+      throw new BadRequest('No sprint found with id to update')
+
+    if(updatedSprint.sprintCode && updatedSprint.sprintCode === sprintExists.sprintCode)
+      throw new BadRequest('Sprint code already in the database')
 
     const result: SprintSelect | undefined =
-      await sprintRepository.updateSprint(updatedSprint)
+      await sprintRepository.updateSprint({ id: sprintId, ...updatedSprint })
 
     if (!result) throw new Error('Failed to update')
 
     return result
   }
 
-  const deleteSprints = async (
-    req: Request
-  ): Promise<DeleteSprintResponse> => {
-    const {sprintId} = req.params
+  const deleteSprints = async (req: Request): Promise<DeleteSprintResponse> => {
+    const sprintId  = Number(req.params.id)
 
-    const id = Number(sprintId)
+    validate.parseSprintId({ id: sprintId })
 
-    validate.parseSprintId({ sprintId: id })
-
-    const sprintExists = await sprintRepository.getSprints({
-      sprintId: id
+    const [sprintExists] = await sprintRepository.getSprints({
+      sprintId
     })
 
-    if (!sprintExists || sprintExists.length === 0)
-      throw new BadRequest('Invalid sprint id')
+    if (!sprintExists) throw new NotFound('Sprint with id is not found')
 
-    const result = await sprintRepository.deleteSprint(id)
+    const result = await sprintRepository.deleteSprint(sprintId)
 
     if (!result.numDeletedRows) throw new Error('Failed to delete')
 

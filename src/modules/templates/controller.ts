@@ -12,10 +12,11 @@ export default (db: Database) => {
   .route('/')
   .get(jsonRoute(templateService.getTemplates))
   .post(jsonRoute(templateService.postTemplates, StatusCodes.CREATED))
-  .patch(jsonRoute(templateService.patchTemplates))
+  // .patch(jsonRoute(templateService.patchTemplates))
 
   router
   .route('/:id')
+  .patch(jsonRoute(templateService.patchTemplates))
   .delete(jsonRoute(templateService.deleteTemplates))
   .get(unsupportedRoute)
   .post(unsupportedRoute)

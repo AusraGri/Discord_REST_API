@@ -5,6 +5,7 @@ export const sprintSchema = z.object({
     .string({
       invalid_type_error: 'Sprint code must be a string',
     })
+    .min(3, { message: 'Must be 3 or more' })
     .trim(),
   fullTitle: z
     .string({
@@ -32,4 +33,12 @@ export const querySchema = z.object({
     })
     .trim()
     .optional(),
+    id: z
+    .number({
+      invalid_type_error: 'id must be a number',
+    })
+    .positive()
+    .optional()
 })
+
+export const sprintUpdateSchema = sprintSchema.omit({ id: true }).partial();

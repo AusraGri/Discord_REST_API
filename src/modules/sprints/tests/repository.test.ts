@@ -12,12 +12,14 @@ const createSprint = createFor(db, 'sprints')
 
 let testSprintCode: string
 let expectedSprint: SprintSelect
+let sprintId: number
 
 beforeAll(async () => {
   await cleanDatabase(db)
   const [sprint] = await createSprint(fixtures.sprints)
 
   testSprintCode = sprint.sprintCode
+  sprintId = sprint.id
   expectedSprint = sprint
 })
 
@@ -30,6 +32,11 @@ describe('Queries for template table', () => {
   test('should get sprint by sprint code', async () => {
     const sprintByCode = await repository.getSprints({sprintCode: testSprintCode})
     expect(sprintByCode[0]).toEqual(expectedSprint)
+  })
+
+  test('should get sprint by sprint id', async () => {
+    const sprintById = await repository.getSprints({sprintId})
+    expect(sprintById[0]).toHaveProperty('id', 1)
   })
 
   test('should add new sprint', async () => {

@@ -1,6 +1,6 @@
 import { Request} from 'express'
 import buildTemplateRepository from './repository'
-import type { TemplatesSelect } from './repository'
+import type { TemplatesInsert, TemplatesSelect } from './repository'
 import templateValidators from './validators'
 import { Database } from '@/database'
 import BadRequest from '@/utils/errors/BadRequest'
@@ -56,19 +56,22 @@ export const buildTemplateService = (db: Database): TemplateService => {
   }
 
   const patchTemplates = async (req: Request): Promise<TemplatesSelect> => {
-    const updatedTemplate = { ...req.body }
+    const templateId = Number(req.params.id)
 
-    validate.parseTemplateUpdatable(updatedTemplate)
+    const updatedTemplate: TemplatesInsert = { ...req.body }
+
+    validate.parseTemplateText(updatedTemplate)
+    validate.parseTemplateId({id: templateId})
 
     const templateExists = await templatesRepository.getTemplates({
-      id: updatedTemplate.id,
+      id: templateId,
     })
 
     if (!templateExists || templateExists.length === 0)
-      throw new BadRequest('Invalid template id')
+      throw new NotFound('No template found')
 
     const result: TemplatesSelect | undefined =
-      await templatesRepository.patchTemplate(updatedTemplate)
+      await templatesRepository.patchTemplate({id: templateId, ...updatedTemplate})
 
     if (!result) throw new Error('Failed to update')
 

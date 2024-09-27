@@ -70,7 +70,6 @@ describe('GET /templates happy path', () => {
   })
 })
 
-// sad path tests
 describe('GET /templates sad path', () => {
   test('should respond with a 404 status code if there are no templates', async () => {
     const response = await supertest(app).get('/templates')
@@ -144,6 +143,11 @@ describe('POST /templates', () => {
 
 describe('PATCH /templates', () => {
   let templateId: number
+  const updateTemplate = {
+    text: 'congratulations {username} for {sprint} is updated!',
+  }
+  const invalidId = 'cat'
+  const invalidIdNumber = 1000
 
   beforeAll(async () => {
     await cleanDatabase(db)
@@ -153,50 +157,37 @@ describe('PATCH /templates', () => {
     templateId = template.id
   })
 
-  test('should respond with a 201 status after updating template', async () => {
-    const updateTemplate = {
-      id: templateId,
-      text: 'congratulations {username} for {sprint} is updated!',
-    }
+  test('should respond with a 200 status after updating template', async () => {
     const response = await supertest(app)
-      .patch('/templates')
+      .patch(`/templates/${templateId}`)
       .send(updateTemplate)
+
     expect(response.statusCode).toBe(200)
   })
 
   test('should respond with a 400 status if template id is invalid', async () => {
-    const updateTemplate = {
-      id: 'cat',
-      text: 'congratulations {username} for {sprint} is updated!',
-    }
     const response = await supertest(app)
-      .patch('/templates')
+      .patch(`/templates/${invalidId}`)
       .send(updateTemplate)
+
     expect(response.statusCode).toBe(400)
     expect(response.body).toHaveProperty('error')
     expect(response.body.error).toHaveProperty('message', 'Validation error')
   })
 
-  test('should respond with a 400 status if template id does not exist', async () => {
-    const updateTemplate = {
-      id: 100,
-      text: 'congratulations {username} for {sprint} is updated!',
-    }
+  test('should respond with a 404 status if template id does not exist', async () => {
     const response = await supertest(app)
-      .patch('/templates')
+      .patch(`/templates/${invalidIdNumber}`)
       .send(updateTemplate)
-    expect(response.statusCode).toBe(400)
+
+    expect(response.statusCode).toBe(404)
     expect(response.body).toHaveProperty('error')
-    expect(response.body.error).toHaveProperty('message', 'Invalid template id')
+    expect(response.body.error).toHaveProperty('message', 'No template found')
   })
 
   test('should respond with a json message of new updated template', async () => {
-    const updateTemplate = {
-      id: templateId,
-      text: 'congratulations {username} for {sprint} is updated!',
-    }
     const response = await supertest(app)
-      .patch('/templates')
+      .patch(`/templates/${templateId}`)
       .send(updateTemplate)
     expect(response.headers['content-type']).toEqual(
       expect.stringContaining('json')
@@ -205,6 +196,7 @@ describe('PATCH /templates', () => {
       'text',
       'congratulations {username} for {sprint} is updated!'
     )
+    expect(response.body).toHaveProperty('id', 1)
   })
 
   afterAll(async () => {

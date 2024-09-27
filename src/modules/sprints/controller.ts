@@ -15,7 +15,7 @@ export default (db: Database) => {
   // .patch(jsonRoute(sprintService.patchSprints))
 
   router
-  .route('/:sprintId')
+  .route('/:id')
   .delete(jsonRoute(sprintService.deleteSprints))
   .patch(jsonRoute(sprintService.patchSprints))
   .get(unsupportedRoute)
