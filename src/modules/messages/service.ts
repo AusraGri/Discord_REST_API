@@ -7,20 +7,19 @@ import buildMessageRepository from './repository'
 import { Database } from '@/database'
 import BadRequest from '@/utils/errors/BadRequest'
 import NotFound from '@/utils/errors/NotFound'
-import DiscordBotService from '../discord/discordBotService'
+import { DiscordBotServiceInterface } from '../discord/discordBotService'
 import refreshUsersData from '../users/utils/refreshUsersData'
 import getRandomTemplate from './utils/getTemplate'
 import buildSprintsRepository from '@/modules/sprints/repository'
 import formDiscordMessage from './utils/formMessage'
 import { getGifs } from '../images/fetchImages'
 import usersManager, { UsersManager } from '../users/utils/usersManager'
-import Logger from '@/utils/errors/ErrorLogger'
 import { GIPHY_API_KEY } from '@/config/config'
 import getRandomImageUrl from './utils/getRandomImage'
 
 export const buildMessageService = (
   db: Database,
-  discordBot: DiscordBotService
+  discordBot: DiscordBotServiceInterface
 ) => {
   const messagesRepository = buildMessageRepository(db)
 
@@ -82,7 +81,6 @@ export const buildMessageService = (
       content: `${message}`,
       files: [url],
     })
-    Logger.info(messageSent.content)
 
     if (!messageSent) throw new Error('Failed to send the message')
 
@@ -108,11 +106,11 @@ export const buildMessageService = (
   return { getMessages, sendCongratulationMessage }
 }
 
-// const request = {
-//   username: 'bcor_',
-//   sprintCode: 'WD-1.1',
-// }
-const request1 = {
-  username: 'kinoreples',
-  sprintCode: 'WD-8.1',
+const request = {
+  username: 'bcor_',
+  sprintCode: 'WD-1.1',
 }
+// const request1 = {
+//   username: 'kinoreples',
+//   sprintCode: 'WD-8.1',
+// }

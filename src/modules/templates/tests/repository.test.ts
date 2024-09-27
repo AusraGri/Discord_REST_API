@@ -1,5 +1,6 @@
 import createTestDatabase from '@tests/utils/createTestDatabase'
 import { createFor } from '@tests/utils/records'
+import cleanDatabase from '@tests/utils/createTestDatabase/cleanDatabase'
 import buildRepository, { TemplatesRepository } from '../repository'
 
 const db = await createTestDatabase()
@@ -10,6 +11,7 @@ const createTemplate = createFor(db, 'templates')
 let templateId: number
 
 beforeAll(async () => {
+  await cleanDatabase(db)
   const [template] = await createTemplate([
     { text: 'congratulations1!' },
     { text: 'congratulations2!' },
