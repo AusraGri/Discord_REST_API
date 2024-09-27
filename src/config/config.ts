@@ -9,9 +9,12 @@ const { DISCORD_BOT_TOKEN, CHANNEL_ID, DATABASE_URL, GIPHY_API_KEY } =
     GIPHY_API_KEY: string
   }
 
-if (!DISCORD_BOT_TOKEN || !CHANNEL_ID || !DATABASE_URL || !GIPHY_API_KEY) {
+const KEYWORDS = 'Well done celebration movie'
+
+
+if (!DISCORD_BOT_TOKEN || !CHANNEL_ID || !DATABASE_URL || !GIPHY_API_KEY || !KEYWORDS) {
     Logger.error('Missing environment variables')
     process.exit(1)
   }
 
-export {DISCORD_BOT_TOKEN, CHANNEL_ID, DATABASE_URL, GIPHY_API_KEY}
+export {DISCORD_BOT_TOKEN, CHANNEL_ID, DATABASE_URL, GIPHY_API_KEY, KEYWORDS}

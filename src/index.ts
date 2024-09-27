@@ -1,19 +1,34 @@
-import 'dotenv/config';
-import createApp from './app';
+import 'dotenv/config'
+import createApp from './app'
 import createDatabase from './database'
-import Logger from './utils/errors/ErrorLogger';
-import { DATABASE_URL } from './config/config';
+import Logger from './utils/errors/ErrorLogger'
+import { DATABASE_URL, GIPHY_API_KEY } from './config/config'
+import buildImagesManager from './modules/images/fetchImages'
+import fetchAndStoreImages from './modules/images'
 
-// const { DATABASE_URL } = process.env;
-const PORT = 3000;
+const PORT = 3000
 
-// if (!DATABASE_URL) {
-//   throw new Error('Provide DATABASE_URL in your environment variables.');
-// }
+const database = createDatabase(DATABASE_URL)
+const app = createApp(database)
 
-const database = createDatabase(DATABASE_URL);
-const app = createApp(database);
+;(async () => {
+  try {
+    const imagesManager = buildImagesManager(GIPHY_API_KEY)
 
-app.listen(PORT, () => {
-  Logger.info(`Server is running at http://localhost:${PORT}`);
-});
+    await fetchAndStoreImages(database, imagesManager)
+
+    Logger.info('Images fetched and stored in the database successfully.')
+
+    app.listen(PORT, () => {
+      Logger.info(`Server is running at http://localhost:${PORT}`)
+    })
+  } catch (error) {
+    const message = (error as Error).message || 'Unknown error occurred'
+    Logger.error(`Error during server startup: ${message}`)
+    process.exit(1)
+  }
+})()
+
+// app.listen(PORT, () => {
+//   Logger.info(`Server is running at http://localhost:${PORT}`);
+// });

@@ -6,7 +6,7 @@ export type Generated<T> =
     : ColumnType<T, T | undefined, T>
 
 export interface Images {
-  id: number
+  id: Generated<number>
   url: string
 }
 

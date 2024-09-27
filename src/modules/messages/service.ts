@@ -12,16 +12,16 @@ import refreshUsersData from '../users/utils/refreshUsersData'
 import getRandomTemplate from './utils/getTemplate'
 import buildSprintsRepository from '@/modules/sprints/repository'
 import formDiscordMessage from './utils/formMessage'
-import { getGifs } from '../images/fetchImages'
 import usersManager, { UsersManager } from '../users/utils/usersManager'
-import { GIPHY_API_KEY } from '@/config/config'
 import getRandomImageUrl from './utils/getRandomImage'
+import buildImageRepository from '@/modules/images/repository'
 
 export const buildMessageService = (
   db: Database,
   discordBot: DiscordBotServiceInterface
 ) => {
   const messagesRepository = buildMessageRepository(db)
+  const imageRepository = buildImageRepository(db)
 
   refreshUsersData(db, discordBot)
 
@@ -58,7 +58,7 @@ export const buildMessageService = (
 
     const user = await users.getUser(username)
 
-    if (!user) throw new BadRequest('Username does not exist in the Discord')
+    if (!user) throw new NotFound('Username does not exist in the Discord')
 
     const template = await getRandomTemplate(db)
 
@@ -73,7 +73,7 @@ export const buildMessageService = (
       sprintTitle: sprint.fullTitle,
     })
 
-    const images = await getGifs(GIPHY_API_KEY)
+    const images = await imageRepository.getImages()
 
     const url = getRandomImageUrl(images)
 
@@ -95,7 +95,7 @@ export const buildMessageService = (
       username,
     }
 
-    const isMessageDataSaved = messagesRepository.insertMessage(messageData)
+    const isMessageDataSaved = await messagesRepository.insertMessage(messageData)
 
     if (!isMessageDataSaved)
       throw new Error('Failed to save sent message data to the database')
@@ -106,10 +106,10 @@ export const buildMessageService = (
   return { getMessages, sendCongratulationMessage }
 }
 
-const request = {
-  username: 'bcor_',
-  sprintCode: 'WD-1.1',
-}
+// const request = {
+//   username: 'bcor_',
+//   sprintCode: 'WD-1.1',
+// }
 // const request1 = {
 //   username: 'kinoreples',
 //   sprintCode: 'WD-8.1',

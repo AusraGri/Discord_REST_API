@@ -5,13 +5,14 @@ import {
 
 class MockDiscordBotService implements DiscordBotServiceInterface {
   private users: DiscordUser[] = [
-    { id: '1', username: 'UserOne' },
-    { id: '2', username: 'UserTwo' },
+    { id: '3', username: 'UserOne' },
+    { id: '4', username: 'UserTwo' },
   ]
 
   sendMessage = vi.fn().mockResolvedValue({
     content: 'Mock message sent',
-    author: { username: 'MockBot' },
+    author: { username: 'UserOne' },
+    createdAt: 'timestamp'
   })
 
   getAllUsersFromChannel = vi.fn().mockResolvedValue(this.users)

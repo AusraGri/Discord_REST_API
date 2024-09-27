@@ -32,7 +32,7 @@ export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable('images')
     .ifNotExists()
-    .addColumn('id', 'integer', (c) => c.primaryKey().notNull().unique())
+    .addColumn('id', 'integer', (c) => c.primaryKey().autoIncrement().notNull().unique())
     .addColumn('url', 'varchar(100)', (c) => c.notNull().unique())
     .execute()
 
