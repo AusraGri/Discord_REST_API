@@ -1,13 +1,17 @@
 ## Setup
 
-**Note:** For this exercise, we have provided an `.env` file with the database connection string. Normally, you would not commit this file to version control. We are doing it here for simplicity and given that we are using a local SQLite database.
+**Note:** For this project, I have provided an `.env.example` file with the database required globals to be able to run the API.
+
+You need to create your Discord Bot first and get bot token key, channel id and provide ALL required information in the .env file (example is uploaded '.env.example')
+
+I am still a bit on process on finishing, so if you will have issues, please contact me.
 
 ## Migrations
 
-Before running the migrations, we need to create a database. We can do this by running the following command:
+Before running the API, you need to create a database. You can do this by running the following command:
 
 ```bash
-npm run migrate:latest
+npm run migrate:gen
 ```
 
 ## Running the server
@@ -24,10 +28,3 @@ In production mode:
 npm run start
 ```
 
-## Updating types
-
-If you make changes to the database schema, you will need to update the types. You can do this by running the following command:
-
-```bash
-npm run generate-types
-```
