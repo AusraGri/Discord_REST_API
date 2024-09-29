@@ -13,13 +13,13 @@ export interface GetMessagesOptions {
 
 export interface MessageRepository {
   getMessages(options?: GetMessagesOptions): Promise<MessagesSelect[] | []>
-  findByUsername(username: string): Promise<MessagesSelect[] | []>
-  findBySprint(sprint: string): Promise<MessagesSelect[] | []>
-  findBySprintAndUsername(
-    sprint: string,
-    username: string
-  ): Promise<MessagesSelect[] | []>
-  findAll(): Promise<MessagesSelect[] | []>
+  // findByUsername(username: string): Promise<MessagesSelect[] | []>
+  // findBySprint(sprint: string): Promise<MessagesSelect[] | []>
+  // findBySprintAndUsername(
+  //   sprint: string,
+  //   username: string
+  // ): Promise<MessagesSelect[] | []>
+  // findAll(): Promise<MessagesSelect[] | []>
   insertMessage(message: MessagesInsert): Promise<MessagesSelect | undefined>
 
 }
@@ -46,30 +46,30 @@ export default (db: Database): MessageRepository => ({
     return query.execute()
   },
 
-  findAll: async (): Promise<MessagesSelect[]> =>
-    db.selectFrom('messages').selectAll().execute(),
+  // findAll: async (): Promise<MessagesSelect[]> =>
+  //   db.selectFrom('messages').selectAll().execute(),
 
-  findByUsername: async (username: string): Promise<MessagesSelect[]> =>
-    db
-      .selectFrom('messages')
-      .selectAll('messages')
-      .where('username', '=', username)
-      .execute(),
+  // findByUsername: async (username: string): Promise<MessagesSelect[]> =>
+  //   db
+  //     .selectFrom('messages')
+  //     .selectAll('messages')
+  //     .where('username', '=', username)
+  //     .execute(),
 
-  findBySprint: async (ids: string) =>
-    db
-      .selectFrom('messages')
-      .selectAll('messages')
-      .where('sprintCode', '=', ids)
-      .execute(),
+  // findBySprint: async (ids: string) =>
+  //   db
+  //     .selectFrom('messages')
+  //     .selectAll('messages')
+  //     .where('sprintCode', '=', ids)
+  //     .execute(),
 
-  findBySprintAndUsername: async (sprint: string, username: string) =>
-    db
-      .selectFrom('messages')
-      .selectAll('messages')
-      .where('username', '=', username)
-      .where('messages.sprintCode', '=', sprint)
-      .execute(),
+  // findBySprintAndUsername: async (sprint: string, username: string) =>
+  //   db
+  //     .selectFrom('messages')
+  //     .selectAll('messages')
+  //     .where('username', '=', username)
+  //     .where('messages.sprintCode', '=', sprint)
+  //     .execute(),
 
   insertMessage: async (message: MessagesInsert) => db.insertInto('messages').values(message).returningAll()
   .executeTakeFirst()

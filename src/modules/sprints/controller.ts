@@ -12,7 +12,8 @@ export default (db: Database) => {
   .route('/')
   .get(jsonRoute(sprintService.getSprints))
   .post(jsonRoute(sprintService.postSprints, StatusCodes.CREATED))
-  // .patch(jsonRoute(sprintService.patchSprints))
+  .patch(unsupportedRoute)
+  .delete(unsupportedRoute)
 
   router
   .route('/:id')
