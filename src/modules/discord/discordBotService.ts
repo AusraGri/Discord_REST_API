@@ -39,7 +39,6 @@ class DiscordBotService implements DiscordBotServiceInterface {
       intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
     })
 
-    // Create a promise that will resolve when the bot is ready
     this.readyPromise = new Promise((resolve, reject) => {
       this.client
         .login(botToken)
@@ -70,7 +69,6 @@ class DiscordBotService implements DiscordBotServiceInterface {
         })
     })
 
-    // Handle termination signals
     process.on('SIGINT', () => this.shutdown())
     process.on('SIGTERM', () => this.shutdown())
   }

@@ -29,6 +29,3 @@ const app = createApp(database)
   }
 })()
 
-// app.listen(PORT, () => {
-//   Logger.info(`Server is running at http://localhost:${PORT}`);
-// });

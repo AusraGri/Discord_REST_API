@@ -244,3 +244,26 @@ describe('DELETE /sprints ', () => {
     await cleanDatabase(db)
   })
 })
+
+
+describe('unsupported endpoints', () => {
+
+  test('should respond with a 405 status code when calling wrong endpoint method on /sprints', async () => {
+    const response = await supertest(app).delete('/sprints')
+    expect(response.statusCode).toBe(405)
+    expect(response.body).toHaveProperty(
+      'error',
+      { message: "Method not allowed" }
+    )
+  })
+
+  test('should respond with a 405 status code when calling wrong endpoint method on /sprints/id', async () => {
+    const invalidId = 0
+    const response = await supertest(app).post(`/sprints/${invalidId}`)
+    expect(response.statusCode).toBe(405)
+    expect(response.body).toHaveProperty(
+      'error',
+      { message: "Method not allowed" }
+    )
+  })
+})

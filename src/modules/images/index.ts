@@ -1,7 +1,6 @@
 import { Database } from '@/database'
 import { ImagesManager } from './fetchImages'
 import saveImages from './saveImages'
-import Logger from '@/utils/errors/ErrorLogger'
 import { KEYWORDS } from '@/config/config'
 
 export default async function fetchAndStoreImages(
@@ -18,7 +17,6 @@ export default async function fetchAndStoreImages(
     if (!isImagesSaved) throw new Error('failed to save images')
   } catch (error) {
     const message = (error as Error).message || 'Unknown error occurred'
-    Logger.error(message)
-    process.exit(1)
+    throw new Error(message)
   }
 }
