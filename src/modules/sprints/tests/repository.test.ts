@@ -30,12 +30,14 @@ describe('Queries for template table', () => {
   })
 
   test('should get sprint by sprint code', async () => {
-    const sprintByCode = await repository.getSprints({sprintCode: testSprintCode})
+    const sprintByCode = await repository.getSprints({
+      sprintCode: testSprintCode,
+    })
     expect(sprintByCode[0]).toEqual(expectedSprint)
   })
 
   test('should get sprint by sprint id', async () => {
-    const sprintById = await repository.getSprints({sprintId})
+    const sprintById = await repository.getSprints({ sprintId })
     expect(sprintById[0]).toHaveProperty('id', 1)
   })
 
@@ -51,7 +53,7 @@ describe('Queries for template table', () => {
     const updateSprint = {
       sprintCode: testSprintCode,
       fullTitle: 'Updated title for sprint',
-      id: 1
+      id: 1,
     }
     const updatedSprint = await repository.updateSprint(updateSprint)
     expect(updatedSprint).toEqual(updateSprint)

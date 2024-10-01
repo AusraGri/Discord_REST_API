@@ -1,4 +1,4 @@
-import { Image } from "@/modules/images/fetchImages"
+import { Image } from '@/modules/images/fetchImages'
 
 export default function getRandomImageUrl(images: Image[]) {
   if (!images || images.length < 1) throw new Error('No templates available')

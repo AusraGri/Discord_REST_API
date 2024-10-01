@@ -1,6 +1,6 @@
 {
-  "name": "server",
-  "version": "1.0.0",
+  "name": "Discord-Bot-API",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -14,7 +14,7 @@
     "migrate:gen": "npm run migrate:latest && npm run gen:types",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "migrate:make": "tsx src/database/create_migration"
+    "migrate:make": "tsx src/utils/createMigration"
   },
   "keywords": [],
   "author": "",

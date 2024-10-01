@@ -10,18 +10,18 @@ const requestSchema = z.object({
     .max(100, { message: 'Must be 100 or fewer characters long' })
     .optional(),
   sprint: z
-  .string({
-    invalid_type_error: 'Sprint must be a string',
-  })
-  .trim()
-  .min(3, { message: 'Must be 3 or more characters long' })
-  .optional(),
+    .string({
+      invalid_type_error: 'Sprint must be a string',
+    })
+    .trim()
+    .min(3, { message: 'Must be 3 or more characters long' })
+    .optional(),
   limit: z
-  .number({
-    invalid_type_error: 'Limit must be a number',
-  })
-  .positive()
-  .optional(),
+    .number({
+      invalid_type_error: 'Limit must be a number',
+    })
+    .positive()
+    .optional(),
 })
 
 const payloadSchema = z.object({
@@ -33,11 +33,11 @@ const payloadSchema = z.object({
     .min(3, { message: 'Must be 3 or more characters long' })
     .max(100, { message: 'Must be 100 or fewer characters long' }),
   sprintCode: z
-  .string({
-    invalid_type_error: 'Sprint code must be a string',
-  })
-  .trim()
-  .min(3, { message: 'Must be 3 or more characters long' }),
+    .string({
+      invalid_type_error: 'Sprint code must be a string',
+    })
+    .trim()
+    .min(3, { message: 'Must be 3 or more characters long' }),
 })
 
-export {requestSchema, payloadSchema}
+export { requestSchema, payloadSchema }

@@ -13,11 +13,11 @@ export const sprintSchema = z.object({
     })
     .trim()
     .min(5, { message: 'Must be 5 or more' }),
-    id: z
+  id: z
     .number({
       invalid_type_error: 'id must be a number',
     })
-    .positive()
+    .positive(),
 })
 
 export const querySchema = z.object({
@@ -33,12 +33,12 @@ export const querySchema = z.object({
     })
     .trim()
     .optional(),
-    id: z
+  id: z
     .number({
       invalid_type_error: 'id must be a number',
     })
     .positive()
-    .optional()
+    .optional(),
 })
 
-export const sprintUpdateSchema = sprintSchema.omit({ id: true }).partial();
+export const sprintUpdateSchema = sprintSchema.omit({ id: true }).partial()

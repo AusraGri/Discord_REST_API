@@ -3,7 +3,9 @@ import buildTemplatesRepository, {
   TemplatesSelect,
 } from '@/modules/templates/repository'
 
-export default async function getRandomTemplate(db: Database): Promise<TemplatesSelect> {
+export default async function getRandomTemplate(
+  db: Database
+): Promise<TemplatesSelect> {
   const templatesRepository = buildTemplatesRepository(db)
   const allTemplates: TemplatesSelect[] | [] =
     await templatesRepository.getTemplates()

@@ -32,7 +32,9 @@ export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable('images')
     .ifNotExists()
-    .addColumn('id', 'integer', (c) => c.primaryKey().autoIncrement().notNull().unique())
+    .addColumn('id', 'integer', (c) =>
+      c.primaryKey().autoIncrement().notNull().unique()
+    )
     .addColumn('url', 'varchar(100)', (c) => c.notNull().unique())
     .execute()
 
@@ -41,11 +43,9 @@ export async function up(db: Kysely<any>): Promise<void> {
     .ifNotExists()
     .addColumn('id', 'integer', (c) => c.primaryKey().autoIncrement().notNull())
     .addColumn('username', 'varchar(100)', (c) =>
-      c.notNull().references('users.username')
-    )
-    .addColumn('sprint_code', 'varchar(50)', (c) =>
       c.notNull()
     )
+    .addColumn('sprint_code', 'varchar(50)', (c) => c.notNull())
     .addColumn('sprint_id', 'integer', (c) =>
       c.notNull().references('sprints.id').onDelete('set null')
     )

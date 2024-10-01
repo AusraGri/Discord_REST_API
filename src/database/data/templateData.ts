@@ -1,6 +1,6 @@
-import { TemplatesInsert } from "@/modules/templates/repository";
+import { TemplatesInsert } from '@/modules/templates/repository'
 
-export const templates: TemplatesInsert [] = [
+export const templates: TemplatesInsert[] = [
   {
     text: 'Way to go, {username}, on completing {sprint}! \n You’ve shown incredible determination. Keep pushing forward',
   },

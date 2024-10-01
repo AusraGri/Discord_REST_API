@@ -6,7 +6,7 @@ export type ImagesInsert = Insertable<Images>
 
 export interface ImagesRepository {
   getImages(): Promise<ImagesSelect[]>
-  insertImages(user: ImagesInsert[]): Promise<ImagesSelect [] | undefined>
+  insertImages(user: ImagesInsert[]): Promise<ImagesSelect[] | undefined>
   deleteImages(): Promise<DeleteResult[]>
 }
 

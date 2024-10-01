@@ -9,18 +9,18 @@ export default (db: Database) => {
   const templateService = buildTemplateService(db)
 
   router
-  .route('/')
-  .get(jsonRoute(templateService.getTemplates))
-  .post(jsonRoute(templateService.postTemplates, StatusCodes.CREATED))
+    .route('/')
+    .get(jsonRoute(templateService.getTemplates))
+    .post(jsonRoute(templateService.postTemplates, StatusCodes.CREATED))
   // .patch(jsonRoute(templateService.patchTemplates))
 
   router
-  .route('/:id')
-  .patch(jsonRoute(templateService.patchTemplates))
-  .delete(jsonRoute(templateService.deleteTemplates))
-  .get(unsupportedRoute)
-  .post(unsupportedRoute)
-  .patch(unsupportedRoute)
+    .route('/:id')
+    .patch(jsonRoute(templateService.patchTemplates))
+    .delete(jsonRoute(templateService.deleteTemplates))
+    .get(unsupportedRoute)
+    .post(unsupportedRoute)
+    .patch(unsupportedRoute)
 
   return router
 }

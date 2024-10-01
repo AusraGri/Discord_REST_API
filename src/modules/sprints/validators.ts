@@ -1,8 +1,8 @@
-import { sprintSchema, querySchema, sprintUpdateSchema } from './schema';
+import { sprintSchema, querySchema, sprintUpdateSchema } from './schema'
 
 const sprintValidators = () => ({
-  parseSprintCode: (sprintCode: unknown) =>
-    sprintSchema.omit({ fullTitle: true }).parse(sprintCode),
+  // parseSprintCode: (sprintCode: unknown) =>
+  //   sprintSchema.omit({ fullTitle: true }).parse(sprintCode),
 
   parseSprintId: (sprintId: unknown) =>
     sprintSchema.omit({ fullTitle: true, sprintCode: true }).parse(sprintId),

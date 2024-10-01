@@ -13,7 +13,6 @@ const createUser = createFor(db, 'users')
 const createTemplate = createFor(db, 'templates')
 const createSprints = createFor(db, 'sprints')
 
-
 beforeAll(async () => {
   await cleanDatabase(db)
   await createSprints(fixtures.sprints)
@@ -82,7 +81,6 @@ describe('GET /messages', () => {
     expect(response.body).toHaveLength(1)
   })
 })
-
 
 // describe('POST /messages', () => {
 

@@ -6,7 +6,7 @@ import templates from './modules/templates/controller'
 import sprints from './modules/sprints/controller'
 import users from './modules/users/controller'
 import DiscordBotService from './modules/discord/discordBotService'
-import { DISCORD_BOT_TOKEN, CHANNEL_ID} from './config/config'
+import { DISCORD_BOT_TOKEN, CHANNEL_ID } from './config/config'
 
 export default function createApp(db: Database) {
   const app = express()

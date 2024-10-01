@@ -51,11 +51,12 @@ export const buildSprintService = (db: Database): SprintService => {
     const { sprintCode, fullTitle } = userRequest
 
     validate.parseSprintUpdatable({ sprintCode, fullTitle })
-const [sprintCodeExist] = await sprintRepository.getSprints({sprintCode})
+    const [sprintCodeExist] = await sprintRepository.getSprints({ sprintCode })
 
-if(sprintCodeExist) throw new BadRequest('Sprint code already in the database')
+    if (sprintCodeExist)
+      throw new BadRequest('Sprint code already in the database')
 
-const result: SprintSelect | undefined =
+    const result: SprintSelect | undefined =
       await sprintRepository.insertSprint({
         sprintCode,
         fullTitle,
@@ -74,16 +75,18 @@ const result: SprintSelect | undefined =
     const updatedSprint = { ...req.body }
 
     validate.parseSprintUpdatable(updatedSprint)
-    validate.parseSprintId({id:sprintId})
+    validate.parseSprintId({ id: sprintId })
 
     const [sprintExists] = await sprintRepository.getSprints({
-      sprintId
+      sprintId,
     })
 
-    if (!sprintExists)
-      throw new BadRequest('No sprint found with id to update')
+    if (!sprintExists) throw new BadRequest('No sprint found with id to update')
 
-    if(updatedSprint.sprintCode && updatedSprint.sprintCode === sprintExists.sprintCode)
+    if (
+      updatedSprint.sprintCode &&
+      updatedSprint.sprintCode === sprintExists.sprintCode
+    )
       throw new BadRequest('Sprint code already in the database')
 
     const result: SprintSelect | undefined =
@@ -95,12 +98,12 @@ const result: SprintSelect | undefined =
   }
 
   const deleteSprints = async (req: Request): Promise<DeleteSprintResponse> => {
-    const sprintId  = Number(req.params.id)
+    const sprintId = Number(req.params.id)
 
     validate.parseSprintId({ id: sprintId })
 
     const [sprintExists] = await sprintRepository.getSprints({
-      sprintId
+      sprintId,
     })
 
     if (!sprintExists) throw new NotFound('Sprint with id is not found')
