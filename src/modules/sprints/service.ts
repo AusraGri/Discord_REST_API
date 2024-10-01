@@ -81,6 +81,10 @@ export const buildSprintService = (db: Database): SprintService => {
       sprintId,
     })
 
+    const {sprintCode, fullTitle} = updatedSprint
+
+    if (!sprintCode && !fullTitle) throw new BadRequest('At least one updatable object should be provided')
+
     if (!sprintExists) throw new BadRequest('No sprint found with id to update')
 
     if (
