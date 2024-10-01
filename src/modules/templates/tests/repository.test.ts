@@ -28,7 +28,7 @@ describe('Queries for template table', () => {
   })
 
   test('should find templates by template id', async () => {
-    const templateById = await repository.getTemplates({id: templateId})
+    const templateById = await repository.getTemplates({ id: templateId })
     const expectedTemplate = { id: 1, text: 'congratulations1!' }
 
     expect(templateById.length).toBe(1)
@@ -37,34 +37,37 @@ describe('Queries for template table', () => {
 
   test('should limit amount of templates to get', async () => {
     const templateLimit = 2
-    const limitedTemplates = await repository.getTemplates( {limit: templateLimit})
+    const limitedTemplates = await repository.getTemplates({
+      limit: templateLimit,
+    })
     expect(limitedTemplates.length).toBe(2)
   })
 
   test('should ignore limit of zero', async () => {
     const templateLimit = 0
-    const limitedTemplates = await repository.getTemplates( {limit: templateLimit})
+    const limitedTemplates = await repository.getTemplates({
+      limit: templateLimit,
+    })
     expect(limitedTemplates.length).toBe(3)
   })
 
   test('should return empty array if template by id is not found', async () => {
     const invalidId = 0
-    const limitedTemplates = await repository.getTemplates( {id: invalidId})
+    const limitedTemplates = await repository.getTemplates({ id: invalidId })
     expect(limitedTemplates.length).toBe(0)
   })
 
   test('should add new template', async () => {
-    const newTemplate = {text: 'New template'}
-    const template = await repository.insertTemplate( newTemplate)
+    const newTemplate = { text: 'New template' }
+    const template = await repository.insertTemplate(newTemplate)
     const allTemplates = await repository.getTemplates()
     expect(allTemplates.length).toBe(4)
     expect(template).toHaveProperty('text', 'New template')
-
   })
 
   test('should update template text', async () => {
-    const updatedTemplate = {id: templateId, text: 'Updated text'}
-    const template = await repository.patchTemplate( updatedTemplate)
+    const updatedTemplate = { id: templateId, text: 'Updated text' }
+    const template = await repository.patchTemplate(updatedTemplate)
     expect(template).toEqual(updatedTemplate)
   })
 
@@ -74,7 +77,6 @@ describe('Queries for template table', () => {
     expect(allTemplates.length).toBe(3)
     expect(template).toHaveProperty('numDeletedRows')
   })
-
 })
 
 afterAll(async () => {

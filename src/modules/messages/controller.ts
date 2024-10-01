@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import type { Database } from '@/database'
 import { buildMessageService } from './service'
-import { jsonRoute } from '@/utils/middleware'
+import { jsonRoute, unsupportedRoute } from '@/utils/middleware'
 import { DiscordBotServiceInterface } from '../discord/discordBotService'
 
 export default (db: Database, discordBot: DiscordBotServiceInterface) => {
@@ -13,6 +13,8 @@ export default (db: Database, discordBot: DiscordBotServiceInterface) => {
     .route('/')
     .get(jsonRoute(messageService.getMessages))
     .post(jsonRoute(messageService.sendCongratulationMessage))
+    .patch(unsupportedRoute)
+    .delete(unsupportedRoute)
 
   return router
 }

@@ -1,22 +1,30 @@
 // createMigration.test.ts
+import { Mock } from 'vitest'
 import * as path from 'path'
 import { createMigration } from '../createMigration'
-import { FileOperations } from '../fileOperations'
+import Logger from '@/utils/errors/ErrorLogger'
+import { createFileOperations } from '../fileOperations'
 
-describe('createMigration', () => {
-
-  const mockFileOps: FileOperations = {
+vi.mock('../fileOperations', () => ({
+  createFileOperations: () => ({
     access: vi.fn(),
     mkdir: vi.fn(),
     writeFile: vi.fn(),
-  }
+  }),
+}))
 
+describe('createMigration', () => {
+  const mockFileOps = createFileOperations()
   const migrationsDir = './migrations'
   const projectDir = process.cwd()
   const expectedMigrationsDir = path.resolve(
     `${projectDir}/src/utils`,
     migrationsDir
   )
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   test('should create a migration file with boilerplate', async () => {
     const migrationName = 'my_migration'
@@ -31,12 +39,14 @@ describe('createMigration', () => {
 
     expect(mockFileOps.writeFile).toHaveBeenCalledWith(
       expect.stringContaining(expectedFileName),
-      expect.stringContaining("import { Kysely } from 'kysely'") // Ensure the filename matches the expected format // Check if boilerplate contains this line
+      expect.stringContaining("import { Kysely } from 'kysely'")
     )
   })
 
-  it('should create the directory if it does not exist', async () => {
-    mockFileOps.access.mockRejectedValue(new Error('Directory does not exist'))
+  test('should create the directory if it does not exist', async () => {
+    const mockedFileAccess = mockFileOps.access as Mock
+
+    mockedFileAccess.mockRejectedValue(new Error('Directory does not exist'))
 
     await createMigration(mockFileOps, migrationsDir, true)
 
@@ -46,17 +56,48 @@ describe('createMigration', () => {
     )
   })
 
-  test('should exit if no migration name is provided', async () => {
+  test('should log an error if no migration name is provided', async () => {
     delete process.argv[2]
 
-    const exitMock = vi.spyOn(process, 'exit').mockImplementation((code) => {
-      expect(code).toBe(0)
-    })
+    const logErrorMock = vi.spyOn(Logger, 'error').mockImplementation(() => {})
 
     await createMigration(mockFileOps, migrationsDir, true)
 
-    expect(exitMock).toHaveBeenCalled()
+    expect(logErrorMock).toHaveBeenCalledWith(
+      'Please provide a migration name.'
+    )
+    logErrorMock.mockRestore()
+  })
 
-    exitMock.mockRestore()
+  test('should not write the file if boilerplate is false', async () => {
+    const migrationName = 'my_migration'
+    process.argv[2] = migrationName
+
+    await createMigration(mockFileOps, migrationsDir, false)
+
+    const expectedFileName = `${new Date().toISOString().split('T')[0]}-${migrationName}.ts`
+
+    expect(mockFileOps.writeFile).not.toHaveBeenCalledWith(
+      expect.stringContaining(expectedFileName),
+      expect.stringContaining("import { Kysely } from 'kysely'")
+    )
+  })
+
+  test('should log an error if creating the migration fails', async () => {
+    const migrationName = 'my_migration'
+    process.argv[2] = migrationName
+
+    const logErrorMock = vi.spyOn(Logger, 'error').mockImplementation(() => {})
+
+    const mockedFileWrite = mockFileOps.writeFile as Mock
+    mockedFileWrite.mockRejectedValue(new Error('Write failed'))
+
+    await createMigration(mockFileOps, migrationsDir, true)
+
+    expect(logErrorMock).toHaveBeenCalledWith(
+      expect.stringContaining('Write failed')
+    )
+
+    logErrorMock.mockRestore()
   })
 })

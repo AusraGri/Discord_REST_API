@@ -1,19 +1,16 @@
 import { Request } from 'express'
-import {
-  validateGetMessagesRequest,
-  validatePostMessageRequest,
-} from './validators'
-import buildMessageRepository from './repository'
+import * as validators from './validators'
 import { Database } from '@/database'
 import BadRequest from '@/utils/errors/BadRequest'
 import NotFound from '@/utils/errors/NotFound'
+import buildMessageRepository from './repository'
 import { DiscordBotServiceInterface } from '../discord/discordBotService'
 import refreshUsersData from '../users/utils/refreshUsersData'
-import getRandomTemplate from './utils/getTemplate'
+import getRandomTemplate from './utils/getRandomTemplate'
 import buildSprintsRepository from '@/modules/sprints/repository'
 import formDiscordMessage from './utils/formMessage'
 import usersManager, { UsersManager } from '../users/utils/usersManager'
-import getRandomImageUrl from './utils/getRandomImage'
+import getRandomImageUrl from './utils/getRandomImageUrl'
 import buildImageRepository from '@/modules/images/repository'
 
 export const buildMessageService = (
@@ -28,7 +25,7 @@ export const buildMessageService = (
   // Manages endpoint requests for getting messages / GET
   const getMessages = async (req: Request) => {
     const userQuery = { ...req.query }
-    const parsedResult = validateGetMessagesRequest(userQuery)
+    const parsedResult = validators.validateGetMessagesRequest(userQuery)
 
     const { limit } = parsedResult
     const { username } = parsedResult
@@ -52,7 +49,7 @@ export const buildMessageService = (
 
     const { username, sprintCode } = req.body
 
-    validatePostMessageRequest({ username, sprintCode })
+    validators.validatePostMessageRequest({ username, sprintCode })
 
     const users: UsersManager = usersManager(db, discordBot)
 
@@ -75,6 +72,9 @@ export const buildMessageService = (
 
     const images = await imageRepository.getImages()
 
+    if (!images || images.length < 1)
+      throw new NotFound('Failed retrieve image')
+
     const url = getRandomImageUrl(images)
 
     const messageSent = await discordBot.sendMessage({
@@ -95,22 +95,16 @@ export const buildMessageService = (
       username,
     }
 
-    const isMessageDataSaved = await messagesRepository.insertMessage(messageData)
+    const isMessageDataSaved =
+      await messagesRepository.insertMessage(messageData)
 
     if (!isMessageDataSaved)
       throw new Error('Failed to save sent message data to the database')
 
-    return {message: `Message to the Discord user: ${username} was sent at: ${messageSent.createdAt}` }
+    return {
+      message: `Message to the Discord user: ${username} was sent at: ${messageSent.createdAt}`,
+    }
   }
 
   return { getMessages, sendCongratulationMessage }
 }
-
-// const request = {
-//   username: 'bcor_',
-//   sprintCode: 'WD-1.1',
-// }
-// const request1 = {
-//   username: 'kinoreples',
-//   sprintCode: 'WD-8.1',
-// }

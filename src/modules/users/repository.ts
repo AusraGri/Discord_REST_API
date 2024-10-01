@@ -27,5 +27,6 @@ export default (db: Database): UsersRepository => ({
   insertUser: async (user: UsersInsert) =>
     db.insertInto('users').values(user).returningAll().executeTakeFirst(),
 
-  deleteUser: async (id: string) => db.deleteFrom('users').where('id', '=', id).executeTakeFirst()
+  deleteUser: async (id: string) =>
+    db.deleteFrom('users').where('id', '=', id).executeTakeFirst(),
 })

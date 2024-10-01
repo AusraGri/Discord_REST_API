@@ -2,7 +2,6 @@ import { type ErrorRequestHandler } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ZodError } from 'zod'
 
-
 const { NODE_ENV } = process.env
 const isTest = NODE_ENV === 'test'
 
@@ -21,12 +20,11 @@ const jsonErrors: ErrorRequestHandler = (error, _req, res, _next) => {
     console.error(error)
   }
   const errorResponse = formatErrorResponse(error)
-  
+
   res.status(statusCode).json(errorResponse)
 }
 
 function getErrorStatusCode(error: Error) {
-
   if ('status' in error && typeof error.status === 'number') {
     return error.status
   }
@@ -38,25 +36,24 @@ function getErrorStatusCode(error: Error) {
 
 function formatErrorResponse(error: Error) {
   if (error instanceof ZodError) {
-    // Extract and simplify the issues from the Zod error
-    const issues = error.issues.map(issue => ({
+    const issues = error.issues.map((issue) => ({
       message: issue.message,
-      path: issue.path.join('.') 
-    }));
+      path: issue.path.join('.'),
+    }))
 
     return {
       error: {
         message: 'Validation error',
-        issues
-      }
-    };
+        issues,
+      },
+    }
   }
 
   return {
     error: {
       message: error.message ?? 'Internal server error',
     },
-  };
+  }
 }
 
 export default jsonErrors

@@ -3,7 +3,7 @@ import { Kysely } from 'kysely'
 export const timestamp = new Date('20240916131856Z')
 
 export async function up(db: Kysely<any>): Promise<void> {
-    await db.schema
+  await db.schema
     .createIndex('idx_messages_username')
     .on('messages')
     .column('username')
@@ -39,4 +39,3 @@ export async function up(db: Kysely<any>): Promise<void> {
     .column('username')
     .execute()
 }
-

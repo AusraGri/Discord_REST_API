@@ -16,23 +16,21 @@ const requestSchema = z.object({
     .optional(),
 })
 
-const templateSchema= z.object({
- id: z
- .number({
-  invalid_type_error: 'id must be a number',
-})
-.positive(),
+const templateSchema = z.object({
+  id: z
+    .number({
+      invalid_type_error: 'id must be a number',
+    })
+    .positive(),
   text: z
-  .string({
-    invalid_type_error: 'Template text must be a string'
-  })
-  .trim()
-  .includes("{username}", { message: "Must include at least one {username}" })
-  .includes("{sprint}", { message: "Must include at least one {sprint}" })
-  .min(20, {message: 'Text should be more than 20 characters long'})
-  .max(250, {message: 'Text should be 250 characters long or shorter'})
+    .string({
+      invalid_type_error: 'Template text must be a string',
+    })
+    .trim()
+    .includes('{username}', { message: 'Must include at least one {username}' })
+    .includes('{sprint}', { message: 'Must include at least one {sprint}' })
+    .min(20, { message: 'Text should be more than 20 characters long' })
+    .max(250, { message: 'Text should be 250 characters long or shorter' }),
 })
-
-
 
 export { requestSchema, templateSchema }

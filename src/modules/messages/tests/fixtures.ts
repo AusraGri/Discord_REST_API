@@ -1,6 +1,9 @@
-export const users = [{id: '1', username: 'Bob' }, {id: '2', username: 'Rob'}]
+export const users = [
+  { id: '1', username: 'Bob' },
+  { id: '2', username: 'Rob' },
+]
 
-export const images = [{url: 'url-1'},{url: 'url-2'} ]
+export const images = [{ url: 'url-1' }, { url: 'url-2' }]
 export const sprints = [
   {
     sprintCode: 'WD-1.1',

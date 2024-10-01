@@ -8,9 +8,9 @@ export interface GetSprintsOptions {
 }
 
 export type SprintUpdate = {
-  fullTitle?: string | undefined;
+  fullTitle?: string | undefined
   id: number
-  sprintCode?: string | undefined;
+  sprintCode?: string | undefined
 }
 export type SprintSelect = Selectable<Sprints>
 
@@ -72,8 +72,5 @@ export default (db: Database): SprintsRepository => ({
   },
 
   deleteSprint: async (sprintId: number) =>
-    db
-      .deleteFrom('sprints')
-      .where('id', '=', sprintId)
-      .executeTakeFirst(),
+    db.deleteFrom('sprints').where('id', '=', sprintId).executeTakeFirst(),
 })

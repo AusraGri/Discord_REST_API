@@ -9,19 +9,19 @@ export default (db: Database) => {
   const sprintService = buildSprintService(db)
 
   router
-  .route('/')
-  .get(jsonRoute(sprintService.getSprints))
-  .post(jsonRoute(sprintService.postSprints, StatusCodes.CREATED))
-  .patch(unsupportedRoute)
-  .delete(unsupportedRoute)
+    .route('/')
+    .get(jsonRoute(sprintService.getSprints))
+    .post(jsonRoute(sprintService.postSprints, StatusCodes.CREATED))
+    .patch(unsupportedRoute)
+    .delete(unsupportedRoute)
 
   router
-  .route('/:id')
-  .delete(jsonRoute(sprintService.deleteSprints))
-  .patch(jsonRoute(sprintService.patchSprints))
-  .get(unsupportedRoute)
-  .post(unsupportedRoute)
-  .patch(unsupportedRoute)
+    .route('/:id')
+    .delete(jsonRoute(sprintService.deleteSprints))
+    .patch(jsonRoute(sprintService.patchSprints))
+    .get(unsupportedRoute)
+    .post(unsupportedRoute)
+    .patch(unsupportedRoute)
 
   return router
 }

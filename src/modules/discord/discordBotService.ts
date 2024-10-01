@@ -124,7 +124,7 @@ class DiscordBotService implements DiscordBotServiceInterface {
     this.isShuttingDown = true
 
     await this.client.destroy()
-    Logger.info(`Shutting down discord bot...`)
+    Logger.info(`Discord bot disconnected`)
     process.exit(0)
   }
 }

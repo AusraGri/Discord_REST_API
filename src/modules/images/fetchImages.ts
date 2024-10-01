@@ -1,7 +1,6 @@
 import { GiphyFetch } from '@giphy/js-fetch-api'
 import Logger from '@/utils/errors/ErrorLogger'
 
-
 export type Image = {
   url: string
 }
@@ -10,10 +9,10 @@ export interface ImagesManager {
   getGifs: (keywords: string) => Promise<Image[]>
 }
 
-const buildImagesManager = (apiKey: string) : ImagesManager => ({
+const buildImagesManager = (apiKey: string): ImagesManager => ({
   getGifs: async (keywords: string) => {
     if (!apiKey) {
-      Logger.error('Giphy API key is not provided');
+      Logger.error('Giphy API key is not provided')
       throw new Error('Giphy API key is not provided')
     }
 
@@ -26,10 +25,12 @@ const buildImagesManager = (apiKey: string) : ImagesManager => ({
       rating: 'g',
     })
 
-    const images: Image [] = gifs.map((gif) => ({url: gif.images.downsized_medium.url}))
+    const images: Image[] = gifs.map((gif) => ({
+      url: gif.images.downsized_medium.url,
+    }))
 
     return images
-  }
+  },
 })
 
 export default buildImagesManager
