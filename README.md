@@ -384,5 +384,5 @@ Discord-Bot-API
 [GitHub Repository](https://github.com/AusraGri/server-template-task) 
 
 
-**Additional note**
+**Additional note**:  
 If you will find a 'cat' - you are lucky!
