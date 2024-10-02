@@ -176,7 +176,7 @@ npm run start
 
   - At least one editable field should be provided (either sprint code or full title or both)  
 
-- **DELETE** `/sprints/:id`
+- **DELETE** `/sprints/:id`  
   Delete a specific sprint.
 
 ### Users
