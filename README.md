@@ -186,6 +186,50 @@ npm run start
   Users are retrieved from discord channel that bot is in.  
   This endpoint just for checking the users.  
 
+
+### Commands
+
+- **Run the tests:**
+  ```bash
+  npm run test
+  ```
+
+- **Get tests coverage report:**
+  ```bash
+  npm run coverage
+  ```
+
+- **Format the code:**
+  ```bash
+  npm run format
+  ```
+
+- **Lint the code:**
+  ```bash
+  npm run lint
+  ```
+
+- **Migrate database to the latest migration:**
+  ```bash
+  npm run migrate:latest
+  ```
+
+- **Generate database types:**
+  ```bash
+  npm run gen:types
+  ```
+
+- **Migrate database to the latest migration and generate database types:**
+  ```bash
+  npm run migrate:gen
+  ```
+
+- **Make a new database migration file:**
+  ```bash
+  npm run migrate:make 'migration name'
+  ```
+
+
 ## Project Structure
 
 ```bash
