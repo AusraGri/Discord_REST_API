@@ -6,7 +6,7 @@ import { DATABASE_URL, GIPHY_API_KEY } from './config/config'
 import buildImagesManager from './modules/images/fetchImages'
 import fetchAndStoreImages from './modules/images'
 
-const PORT = 3000
+const PORT = 3001
 
 const database = createDatabase(DATABASE_URL)
 const app = createApp(database)
