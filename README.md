@@ -4,6 +4,10 @@
 
 You need to create your Discord Bot first and obtain the bot token, channel ID, and provide **ALL** required information in the `.env` file (see the provided `.env.example`).
 
+#### Included
+ - database will be injected with some Sprints and Templates
+ - once you set up your discord bot in your discord server, you can get valid usernames by using /users endpoint (check the description of endpoints)
+
 When you successfully start the server, you should see:
 ```
 [INFO]: Images fetched and stored in the database successfully.
@@ -35,8 +39,8 @@ If you don't see this, try to restart the server.
 
    - Your Discord bot should be already in your Discord server.
    - Create a channel (if none exists).
-   - Enable Developer Mode:  
-     User Settings -> App Settings -> Advanced -> Enable Developer Mode.
+   - Enable Discord Developer Mode:  
+     In your Discord App -> User Settings -> App Settings -> Advanced -> Enable Developer Mode.
    - Right-click on the channel and select "Copy Channel ID".
 
    Add this value to the `.env` file as `CHANNEL_ID`.  
@@ -280,7 +284,7 @@ npm run start
 - **GET** `/users`
   This endpoint will get all users from the database. Users are saved in the database once discord bot starts. 
   Users are retrieved from discord channel that bot is in.  
-  This endpoint just for checking the users.  
+  This endpoint is just for checking the users and this can help you to get valid Discord usernames to form a proper congratulation message.
 
   **Response (in JSON format)**:
   ```json
@@ -375,3 +379,10 @@ Discord-Bot-API
 └── vitest.config.js
 ```
 
+
+**Peer programming exercise**
+[GitHub Repository](https://github.com/AusraGri/server-template-task) 
+
+
+**Additional note**
+If you will find a 'cat' - you are lucky!
