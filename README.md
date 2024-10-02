@@ -14,6 +14,8 @@ You need to create your Discord Bot first and obtain the bot token, channel ID, 
 
 3. **Create a Discord Bot**
 
+3. **Create a Discord Bot**
+
    - Visit [Discord Developer Portal](https://discord.com/developers/applications) and create a new bot.
    - Follow this [video tutorial](https://youtu.be/Q0JlD7gCZRs?si=7zfC9zj2791Jursq&t=350) from 5:50 to 7:50 to learn how to create the bot.
 
@@ -30,6 +32,8 @@ You need to create your Discord Bot first and obtain the bot token, channel ID, 
    - Right-click on the channel and select "Copy Channel ID".
 
    Add this value to the `.env` file as `CHANNEL_ID`.
+
+5. **Get Giphy API Key**
 
 5. **Get Giphy API Key**
 
@@ -89,6 +93,19 @@ npm run start
 
   - `username` should be valid Discord user username.
   - `sprintCode` should be valid sprintCode from the database.
+  Request payload( in JSON format):
+
+  ```json
+  {
+    "username": "johndoe",
+    "sprintCode": "Sprint1"
+  }
+  ```
+
+  **Notes**:
+
+  - `username` should be valid Discord user username.
+  - `sprintCode` should be valid sprintCode from the database.
 
 - **GET** `/messages`  
   Get a list of all congratulatory messages.
@@ -106,6 +123,17 @@ npm run start
 
 - **POST** `/templates`  
   Create a new congratulatory message template.
+  Request payload( in JSON format):
+
+  ```json
+  {
+    "text": "Congratulations {username} for finishing the {sprint}"
+  }
+  ```
+
+  **Notes**:
+
+  - {username} and {sprint} are required to be included in the congratulation text.
   Request payload( in JSON format):
 
   ```json
@@ -151,6 +179,14 @@ npm run start
     "fullTitle": "Sprint One Full Title"
   }
   ```
+  Request payload( in JSON format):
+
+  ```json
+  {
+    "sprintCode": "Sprint1",
+    "fullTitle": "Sprint One Full Title"
+  }
+  ```
 
 - **GET** `/sprints`  
   Retrieve all sprints.
@@ -178,13 +214,27 @@ npm run start
   **Note**:
 
   - At least one editable field should be provided (either sprint code or full title or both)
+  Request payload( in JSON format):
 
-- **DELETE** `/sprints/:id`  
+  ```json
+  {
+    "sprintCode": "Sprint1",
+    "fullTitle": "Sprint One Full Title"
+  }
+  ```
+
+  **Note**:
+
+  - At least one editable field should be provided (either sprint code or full title or both)
+
+- **DELETE** `/sprints/:id`
   Delete a specific sprint.
 
 ### Users
 
 - **GET** `/users`
+  This endpoint will get all users from the database. Users are saved in the database once discord bot starts. Users are retrieved from discord channel that bot is in.
+  This endpoint just for checking the users.
   This endpoint will get all users from the database. Users are saved in the database once discord bot starts. Users are retrieved from discord channel that bot is in.
   This endpoint just for checking the users.
 
