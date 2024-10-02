@@ -4,6 +4,19 @@
 
 You need to create your Discord Bot first and obtain the bot token, channel ID, and provide **ALL** required information in the `.env` file (see the provided `.env.example`).
 
+When you successfully start the server, you should see:
+```
+[INFO]: Images fetched and stored in the database successfully.
+
+[INFO]: Server is running at http://localhost:3001
+
+[INFO]: Discord bot logged in as {discord bot name} in #{your channel name}
+
+[INFO]: status - [READY]
+```
+If you don't see this, try to restart the server.  
+
+
 ### Discord Bot Creation and Necessary KEYS for API to Work
 
 1. **Create a Discord Account**  
@@ -66,7 +79,6 @@ In production mode:
 ```bash
 npm run start
 ```
-
 ## Endpoints
 
 ### Messages
