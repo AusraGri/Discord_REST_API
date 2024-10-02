@@ -7,12 +7,7 @@ You need to create your Discord Bot first and obtain the bot token, channel ID, 
 ### Discord Bot Creation and Necessary KEYS for API to Work
 
 1. **Create a Discord Account**  
-   You must have a Discord account. If you don't, create one.
-
-2. **Create a Discord Server**  
-   Ensure you have a Discord server. If not, create one to run the bot.
-
-3. **Create a Discord Bot**
+   You must have a Discord account. If you don't, create one.  
 
 3. **Create a Discord Bot**
 
@@ -31,9 +26,7 @@ You need to create your Discord Bot first and obtain the bot token, channel ID, 
      User Settings -> App Settings -> Advanced -> Enable Developer Mode.
    - Right-click on the channel and select "Copy Channel ID".
 
-   Add this value to the `.env` file as `CHANNEL_ID`.
-
-5. **Get Giphy API Key**
+   Add this value to the `.env` file as `CHANNEL_ID`.  
 
 5. **Get Giphy API Key**
 
@@ -91,21 +84,8 @@ npm run start
 
   **Notes**:
 
-  - `username` should be valid Discord user username.
-  - `sprintCode` should be valid sprintCode from the database.
-  Request payload( in JSON format):
-
-  ```json
-  {
-    "username": "johndoe",
-    "sprintCode": "Sprint1"
-  }
-  ```
-
-  **Notes**:
-
-  - `username` should be valid Discord user username.
-  - `sprintCode` should be valid sprintCode from the database.
+  - `username` should be valid Discord user username.  
+  - `sprintCode` should be valid sprintCode from the database.  
 
 - **GET** `/messages`  
   Get a list of all congratulatory messages.
@@ -133,18 +113,7 @@ npm run start
 
   **Notes**:
 
-  - {username} and {sprint} are required to be included in the congratulation text.
-  Request payload( in JSON format):
-
-  ```json
-  {
-    "text": "Congratulations {username} for finishing the {sprint}"
-  }
-  ```
-
-  **Notes**:
-
-  - {username} and {sprint} are required to be included in the congratulation text.
+  - {username} and {sprint} are required to be included in the congratulation text.  
 
 - **GET** `/templates`  
   Retrieve all congratulatory message templates.
@@ -179,14 +148,6 @@ npm run start
     "fullTitle": "Sprint One Full Title"
   }
   ```
-  Request payload( in JSON format):
-
-  ```json
-  {
-    "sprintCode": "Sprint1",
-    "fullTitle": "Sprint One Full Title"
-  }
-  ```
 
 - **GET** `/sprints`  
   Retrieve all sprints.
@@ -213,19 +174,7 @@ npm run start
 
   **Note**:
 
-  - At least one editable field should be provided (either sprint code or full title or both)
-  Request payload( in JSON format):
-
-  ```json
-  {
-    "sprintCode": "Sprint1",
-    "fullTitle": "Sprint One Full Title"
-  }
-  ```
-
-  **Note**:
-
-  - At least one editable field should be provided (either sprint code or full title or both)
+  - At least one editable field should be provided (either sprint code or full title or both)  
 
 - **DELETE** `/sprints/:id`
   Delete a specific sprint.
@@ -233,10 +182,9 @@ npm run start
 ### Users
 
 - **GET** `/users`
-  This endpoint will get all users from the database. Users are saved in the database once discord bot starts. Users are retrieved from discord channel that bot is in.
-  This endpoint just for checking the users.
-  This endpoint will get all users from the database. Users are saved in the database once discord bot starts. Users are retrieved from discord channel that bot is in.
-  This endpoint just for checking the users.
+  This endpoint will get all users from the database. Users are saved in the database once discord bot starts. 
+  Users are retrieved from discord channel that bot is in.  
+  This endpoint just for checking the users.  
 
 ## Project Structure
 
