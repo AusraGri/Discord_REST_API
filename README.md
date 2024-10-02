@@ -95,11 +95,11 @@ npm run start
 
   **Optional Query Parameters**:
 
-  - `username`: Filter messages by username
+  - `username`: Filter messages by username 
     Example: `/messages?username=johdoe`
-  - `sprint`: Filter messages by sprint code
+  - `sprint`: Filter messages by sprint code  
     Example: `/messages?sprint=WD-1.1`
-  - `limit`: Limit the number of messages returned
+  - `limit`: Limit the number of messages returned  
     Example: `/messages?limit=5`
 
 ### Templates
@@ -123,7 +123,7 @@ npm run start
 
   **Optional Query Parameters**:
 
-  - `id`: Filter templates by template ID  
+  - `id`: Filter templates by template ID
     Example: `/templates?id=3`
   - `limit`: Limit the number of templates returned  
     Example: `/templates?limit=1`
