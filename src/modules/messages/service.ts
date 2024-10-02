@@ -25,15 +25,17 @@ export const buildMessageService = (
   // Manages endpoint requests for getting messages / GET
   const getMessages = async (req: Request) => {
     const userQuery = { ...req.query }
-    const parsedResult = validators.validateGetMessagesRequest(userQuery)
 
-    const { limit } = parsedResult
-    const { username } = parsedResult
-    const sprintCode = parsedResult.sprint
+    const limit = userQuery.limit ? Number(userQuery.limit) : undefined
+    const username = userQuery.username? userQuery.username : undefined
+    const sprint = userQuery.sprint ? userQuery.sprint : undefined
+
+    const parsedResult = validators.validateGetMessagesRequest({limit, username, sprint})
+
     const messages = await messagesRepository.getMessages({
-      username,
-      sprintCode,
-      limit,
+      username: parsedResult.username,
+      sprintCode: parsedResult.sprint,
+      limit: parsedResult.limit
     })
 
     if (!messages || messages.length === 0) {

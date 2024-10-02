@@ -12,7 +12,6 @@ export default (db: Database) => {
     .route('/')
     .get(jsonRoute(templateService.getTemplates))
     .post(jsonRoute(templateService.postTemplates, StatusCodes.CREATED))
-  // .patch(jsonRoute(templateService.patchTemplates))
 
   router
     .route('/:id')

@@ -118,12 +118,16 @@ npm run start
 - **PATCH** `/sprints/:id`  
   Update a specific sprint.
   Required payload in json format as {sprintCode: "Sprint1", fullTitle: "Sprint One Full Title"}
-  
-
+  At least one editable field should be provided (either sprint code or full title or both)
 
 - **DELETE** `/sprints/:id`  
   Delete a specific sprint.
 
+### Users
+
+- **GET** `/users`
+This endpoint will get all users from the database. Users are saved in the database once discord bot starts. Users are retrieved from discord channel that bot is in.
+This endpoint just for checking the users.
 
 
 ## Project Structure
