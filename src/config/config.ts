@@ -8,7 +8,7 @@ const { DISCORD_BOT_TOKEN, CHANNEL_ID, DATABASE_URL, GIPHY_API_KEY } =
     GIPHY_API_KEY: string
   }
 
-const KEYWORDS = 'Well done celebration movie'
+const KEYWORDS = 'Well done celebration'
 
 if (process.env.NODE_ENV !== 'test') {
   if (

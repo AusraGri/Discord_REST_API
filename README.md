@@ -85,7 +85,7 @@ npm run start
 
 - **POST** `/messages`  
   Send a congratulatory message to a user on Discord.
-  Request payload( in JSON format):
+  **Request payload( in JSON format)**:
 
   ```json
   {
@@ -99,6 +99,13 @@ npm run start
   - `username` should be valid Discord user username.  
   - `sprintCode` should be valid sprintCode from the database.  
 
+  **Response ( in JSON format)**:
+  ```json
+  {
+  "message": "Message to the Discord user: {username} was sent at: {timestamp}"
+  }
+  ```
+
 - **GET** `/messages`  
   Get a list of all congratulatory messages.
 
@@ -110,6 +117,24 @@ npm run start
     Example: `/messages?sprint=WD-1.1`
   - `limit`: Limit the number of messages returned  
     Example: `/messages?limit=5`
+  
+   **Response ( in JSON format)**:
+  ```json
+  [
+  {
+    "id": number,
+    "username": string,
+    "sprintCode": string,
+    "sprintId": number | null,
+    "sprintTitle": string,
+    "originalMessage": string,
+    "templateId": number | null,
+    "templateText": string,
+    "gifUrl": string,
+    "createdAt": timestamp
+  },
+  ]
+  ```
 
 ### Templates
 
@@ -142,11 +167,43 @@ npm run start
   - `id` must be a valid template ID number.
   - `limit` must be a valid number to specify how many templates to retrieve.
 
+   **Response (in JSON format)**:
+  ```json
+  [
+  {
+    "id": number,
+    "text": string
+  },
+  ]
+  ```
+
 - **PATCH** `/templates/:id`  
-  Update a specific congratulatory message template.
+  Update a specific congratulatory message template.  
+   Request payload( in JSON format):
+
+  ```json
+  {
+    "text" : "Congratulations {username} for finishing the {sprint}"
+  }
+  ```
+
+  **Response (in JSON format)**:
+  ```json
+  {
+    "id": number,
+    "text": string
+  }
+  ```
 
 - **DELETE** `/templates/:id`  
-  Delete a specific congratulatory message template.
+  Delete a specific congratulatory message template. 
+
+   **Response (in JSON format)**:
+  ```json
+  {
+    "message": "Template deleted successfully"
+  }
+  ```
 
 ### Sprints
 
@@ -173,6 +230,17 @@ npm run start
   - `sprintCode` : Filter sprints by sprint code  
     Example: `/sprints?sprintCode=WD-1.1`
 
+  **Response (in JSON format)**:
+  ```json
+  [
+  {
+    "id": number,
+    "sprintCode": string,
+    "fullTitle": string
+  },
+  ]
+  ```
+
 - **PATCH** `/sprints/:id`
   Update a specific sprint.
   Request payload( in JSON format):
@@ -188,8 +256,24 @@ npm run start
 
   - At least one editable field should be provided (either sprint code or full title or both)  
 
+  **Response (in JSON format)**:
+  ```json
+  {
+    "id": number,
+    "sprintCode": string,
+    "fullTitle": string
+  }
+  ```
+
 - **DELETE** `/sprints/:id`  
-  Delete a specific sprint.
+  Delete a specific sprint.  
+
+   **Response (in JSON format)**:
+  ```json
+  {
+    "message": "Sprint deleted successfully"
+  }
+  ```
 
 ### Users
 
@@ -197,6 +281,16 @@ npm run start
   This endpoint will get all users from the database. Users are saved in the database once discord bot starts. 
   Users are retrieved from discord channel that bot is in.  
   This endpoint just for checking the users.  
+
+  **Response (in JSON format)**:
+  ```json
+  [
+  {
+    "id": string,
+    "username": string
+  },
+  ]
+  ```
 
 
 ### Commands
