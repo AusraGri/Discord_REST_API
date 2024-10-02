@@ -122,16 +122,16 @@ npm run start
   ```json
   [
   {
-    "id": number,
-    "username": string,
-    "sprintCode": string,
-    "sprintId": number | null,
-    "sprintTitle": string,
-    "originalMessage": string,
-    "templateId": number | null,
-    "templateText": string,
-    "gifUrl": string,
-    "createdAt": timestamp
+    "id": "number",
+    "username": "string",
+    "sprintCode": "string",
+    "sprintId": "number | null",
+    "sprintTitle": "string",
+    "originalMessage": "string",
+    "templateId": "number | null",
+    "templateText": "string",
+    "gifUrl": "string",
+    "createdAt": "timestamp"
   },
   ]
   ```
@@ -171,8 +171,8 @@ npm run start
   ```json
   [
   {
-    "id": number,
-    "text": string
+    "id": "number",
+    "text": "string"
   },
   ]
   ```
@@ -190,8 +190,8 @@ npm run start
   **Response (in JSON format)**:
   ```json
   {
-    "id": number,
-    "text": string
+    "id": "number",
+    "text": "string"
   }
   ```
 
@@ -234,9 +234,9 @@ npm run start
   ```json
   [
   {
-    "id": number,
-    "sprintCode": string,
-    "fullTitle": string
+    "id": "number",
+    "sprintCode": "string",
+    "fullTitle": "string"
   },
   ]
   ```
@@ -259,9 +259,9 @@ npm run start
   **Response (in JSON format)**:
   ```json
   {
-    "id": number,
-    "sprintCode": string,
-    "fullTitle": string
+    "id": "number",
+    "sprintCode": "string",
+    "fullTitle": "string"
   }
   ```
 
@@ -286,8 +286,8 @@ npm run start
   ```json
   [
   {
-    "id": string,
-    "username": string
+    "id": "string",
+    "username": "string"
   },
   ]
   ```
