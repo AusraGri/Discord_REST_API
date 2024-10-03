@@ -16,8 +16,7 @@ export type DiscordUser = {
 }
 
 export interface DiscordBotManager {
-
-    initClient(): Promise<void>
+  initClient(): Promise<void>
   sendMessage(
     message: string | MessagePayload | BaseMessageOptions
   ): Promise<Message>
@@ -27,7 +26,10 @@ export interface DiscordBotManager {
   shutdownBot(): Promise<void>
 }
 
-const discordBotManager = (token: string, channelId: string): DiscordBotManager => {
+const discordBotManager = (
+  token: string,
+  channelId: string
+): DiscordBotManager => {
   const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
   })
@@ -81,18 +83,21 @@ const discordBotManager = (token: string, channelId: string): DiscordBotManager 
     }
   }
 
-  const shutdownBot = async() => {
+  const shutdownBot = async () => {
     try {
-    if (isShuttingDown) return
-    isShuttingDown = true
+      if (isShuttingDown) return
+      isShuttingDown = true
 
-    await client.destroy()
-    Logger.info(`Discord bot disconnected`)
-    process.exit(0)
-  } catch (error) {
-        console.log(error)
+      await client.destroy()
+      Logger.info(`Discord bot disconnected new`)
+      process.exit(0)
+    } catch (error) {
+      console.log(error)
     }
-}
+  }
+
+  process.on('SIGINT', () => shutdownBot())
+  process.on('SIGTERM', () => shutdownBot())
 
   return { initClient, sendMessage, fetchAllUsersFromChannel, shutdownBot }
 }
