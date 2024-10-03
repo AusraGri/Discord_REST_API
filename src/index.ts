@@ -28,3 +28,4 @@ const app = createApp(database)
     process.exit(1)
   }
 })()
+

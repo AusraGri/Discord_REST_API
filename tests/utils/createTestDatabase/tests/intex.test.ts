@@ -68,10 +68,10 @@ describe('index.ts', () => {
     )
     expect(Logger.info).toHaveBeenNthCalledWith(
       2,
-      'Server is running at http://localhost:3000'
+      'Server is running at http://localhost:3001'
     )
 
-    expect(mockApp.listen).toHaveBeenCalledWith(3000, expect.any(Function))
+    expect(mockApp.listen).toHaveBeenCalledWith(3001, expect.any(Function))
   })
 
   test('should log an error and exit if fetching images fails', async () => {
