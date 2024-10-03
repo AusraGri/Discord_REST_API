@@ -43,14 +43,6 @@ export default (db: Database): SprintsRepository => ({
 
     return query.execute()
   },
-  //   getSprints: async () => db.selectFrom('sprints').selectAll().execute(),
-
-  //   getSprintBySprintCode: async (sprintC: string) =>
-  //     db
-  //       .selectFrom('sprints')
-  //       .where('sprintCode', '=', sprintC)
-  //       .selectAll()
-  //       .executeTakeFirst(),
 
   insertSprint: async (sprint: SprintInsert) =>
     db.insertInto('sprints').values(sprint).returningAll().executeTakeFirst(),
