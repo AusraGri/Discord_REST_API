@@ -12,6 +12,7 @@ export interface UsersRepository {
   insertUser(user: UsersInsert): Promise<UsersSelect | undefined>
 
   deleteUser(id: string): Promise<DeleteResult>
+
 }
 
 export default (db: Database): UsersRepository => ({
@@ -29,4 +30,5 @@ export default (db: Database): UsersRepository => ({
 
   deleteUser: async (id: string) =>
     db.deleteFrom('users').where('id', '=', id).executeTakeFirst(),
+
 })

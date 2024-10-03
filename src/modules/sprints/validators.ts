@@ -1,7 +1,6 @@
 import { sprintSchema, querySchema, sprintUpdateSchema } from './schema'
 
 const sprintValidators = () => ({
-
   parseSprintId: (sprintId: unknown) =>
     sprintSchema.omit({ fullTitle: true, sprintCode: true }).parse(sprintId),
 

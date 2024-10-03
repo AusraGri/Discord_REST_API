@@ -4,7 +4,7 @@ module.exports = {
   root: true,
   extends: [
     'eslint:recommended',
-    'airbnb', // or any other config you want to extend
+    'airbnb-base', // or any other config you want to extend
     'airbnb-typescript/base',
     'prettier',
   ],

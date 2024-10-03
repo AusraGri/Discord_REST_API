@@ -51,6 +51,7 @@ describe('Queries for template table', () => {
     expect(allUsers.length).toBe(3)
     expect(deletedUser).toHaveProperty('numDeletedRows')
   })
+
 })
 
 afterAll(async () => {

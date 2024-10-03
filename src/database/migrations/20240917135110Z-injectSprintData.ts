@@ -13,7 +13,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .values(
       sprintsData.map((sprint) => ({
         sprint_code: sprint.sprintCode,
-        full_title: sprint.fullTitle, 
+        full_title: sprint.fullTitle,
       }))
     )
     .execute()

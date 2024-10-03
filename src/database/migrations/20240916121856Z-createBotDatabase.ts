@@ -42,9 +42,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .createTable('messages')
     .ifNotExists()
     .addColumn('id', 'integer', (c) => c.primaryKey().autoIncrement().notNull())
-    .addColumn('username', 'varchar(100)', (c) =>
-      c.notNull()
-    )
+    .addColumn('username', 'varchar(100)', (c) => c.notNull())
     .addColumn('sprint_code', 'varchar(50)', (c) => c.notNull())
     .addColumn('sprint_id', 'integer', (c) =>
       c.notNull().references('sprints.id').onDelete('set null')
